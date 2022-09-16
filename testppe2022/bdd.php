@@ -5,7 +5,6 @@ include('funtion bdd.php');
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
-    <title>Ma page de test</title>
 </head>
 <body>
     <h1>Formulaire d'inscription </h1>
