@@ -1,10 +1,12 @@
 <?php
 session_start();
-include('funtion bdd.php');
+include('./funtion bdd.php');
+$conn = getBdd('localhost', 'root', '');
 ?>
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
+    <title>Ma page de test</title>
 </head>
 <body>
     <h1>Formulaire d'inscription </h1>
@@ -28,7 +30,11 @@ include('funtion bdd.php');
             <label form="tel">entrez votre numero de telephone </label>
             <input type="tel" name="tel">
             <br><br>
-            <input type="submit" >
+            <label form="cp"> entrez votre code postal </label>
+            <input type="text" name="cp">
+            <br><br>
+            <input type="submit" name="connexion" >
     </form>
+    <a href="page%20de%20connexion.php"> Pour vous connecter</a>
 </body>
 </html>

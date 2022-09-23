@@ -1,17 +1,7 @@
 <?php
-       session_start();
-$servername = 'localhost';
-$username = 'root';
-$password = '';
-try {
-    $conn = new PDO("mysql:host=$servername;dbname=testppe2022", $username, $password);
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    echo 'Connexion réussie <br>';
-}
-catch(PDOException $e)
-{
-    echo "Erreur : " . $e->getMessage();
-}
+session_start();
+include('./funtion bdd.php');
+$conn = getBdd('localhost', 'root', '');
        $Numsecur = $_POST['Numsecur'];
        $nom = $_POST['nom'];
        $prenom =$_POST['prenom'];
@@ -20,9 +10,10 @@ catch(PDOException $e)
        $ville =$_POST['ville'];
        $email =$_POST['email'];
        $tel = $_POST['tel'];
-       $sql ="INSERT INTO patients( nom, prenom,dateNaissance,adresse,Numsecur,ville,email,tel) VALUES ( :nom,:prenom,:dateNaissance,:adresse,:Numsecur,:ville,:email,:tel)";
+       $cp = $_POST['cp'];
+       $sql ="INSERT INTO patients( nom, prenom,dateNaissance,adresse,Numsecur,ville,email,tel,cp) VALUES ( :nom,:prenom,:dateNaissance,:adresse,:Numsecur,:ville,:email,:tel,:cp)";
        $res = $conn->prepare($sql);
-       $exec = $res->execute(array(":nom"=>$nom,":prenom"=>$prenom,":dateNaissance"=>$dateNaissance ,":adresse"=>$adresse , ":Numsecur"=>$Numsecur,":ville"=>$ville, ":email"=>$email,":tel"=>$tel));
+       $exec = $res->execute(array(":nom"=>$nom,":prenom"=>$prenom,":dateNaissance"=>$dateNaissance ,":adresse"=>$adresse , ":Numsecur"=>$Numsecur,":ville"=>$ville, ":email"=>$email,":tel"=>$tel, ":cp"=>$cp));
        if($exec){
            echo"donnees inserees";
        }else{
