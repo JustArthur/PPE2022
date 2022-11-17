@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('./funtion bdd.php');
-$conn = getBdd('localhost', 'root', '');
+$conn = getBdd('localhost', 'root', 'root');
 ?>
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
@@ -11,8 +11,8 @@ $conn = getBdd('localhost', 'root', '');
 <body>
     <h1>Formulaire d'inscription </h1>
     <form method="post" action="funtion%20formulaire.php">
-            <label for="Numsecur">entrez votre numero de securite social </label>
-            <input type="text" name="Numsecur" maxlength="15"><br><br>
+            <label for="Numsecu">entrez votre numero de securite social </label>
+            <input type="text" name="Numsecu" maxlength="15"><br><br>
             <label for="nom"> entrez votre nom</label>
             <input type="text" name="nom"  />
             <label for="prenom"> entrez votre prenom </label>
@@ -35,6 +35,6 @@ $conn = getBdd('localhost', 'root', '');
             <br><br>
             <input type="submit" name="connexion" >
     </form>
-    <a href="page%20de%20connexion.php"> Pour vous connecter</a>
+    <a href="formulaire_personne.php">suivant</a>
 </body>
 </html>
