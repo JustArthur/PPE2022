@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins';
+}
+
+.container {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    height: 100vh;
+    width: calc(100vw - 250px);
+}
+
+.container h1, .container a{
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.list-patient  {
+    display: flex;
+    margin-top: 50px;
+    margin-left: 50px;
+    width: 70vw;
+    gap: 30px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.div-card-patient {
+    height: 300px;
+    width: 200px;
+    background-color: white;
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: 12px 10px 22px -10px rgba(0,0,0,0.44);
+    -webkit-box-shadow: 12px 10px 22px -10px rgba(0,0,0,0.44);
+    -moz-box-shadow: 12px 10px 22px -10px rgba(0,0,0,0.44);
+}
