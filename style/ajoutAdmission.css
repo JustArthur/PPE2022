@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    font-family: 'Rubik', sans-serif;
+    font-style: normal;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: #ECF1F5;
+}
+
+main {
+    margin: auto;
+    width: 50%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin-top: 50px;
+}
+
+main h2 {
+    margin: 40px 0 20px 0;
+}
+
+main form .erreur {
+    width: 100%;
+    height: 50px;
+    background-color: #ff000080;
+    color: #000000;
+    font-size: 20px;
+    border: 2px solid #FF0000;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 80%;
+}
+
+main form input {
+    padding: 20px;
+    background: #FFFFFF;
+    border: 2px solid #D0D0D0;
+    transition: all 300ms ease;
+    outline: 0 solid #FEDB01;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+main form select {
+    background: #FFFFFF;
+    border: 2px solid #D0D0D0;
+    padding: 20px;
+    transition: all 300ms ease;
+    font-weight: 400;
+    font-size: 18px;
+    color: #000000;
+}
+
+main form input[name='numSecu'],
+main form input[name='nomConfiance'],
+main form input[name='nomPrevenir'],
+main form select[name='operation'],
+main form input[name='organisme'] {
+    border-radius: 10px 10px 0 0;
+}
+
+main form input[name='telephone'],
+main form input[name='adresseConfiance'],
+main form input[name='adressePrevenir'],
+main form select[name='docteur'],
+main form select[name='chambre'] {
+    border-radius: 0 0 10px 10px;
+}
+
+main form input:focus {
+    z-index: 2;
+    outline: 5px solid #FEDB01;
+    transition: all 300ms ease;
+}
+
+main form .input {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+main form .input select {
+    width: 50%;
+}
+
+main form label {
+    display: flex;
+    flex-direction: column;
+    font-size: 25px;
+    font-weight: 500;
+}
+
+main form input[type='file'] {
+    margin: 20px 0 50px 0;
+    padding: 0;
+    background: none;
+    border: none;
+    transition: none;
+    outline: none;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+main form input[name='next'],
+main form input[name='finish'] {
+    height: 70px;
+    background: #FEDB01;
+    border-radius: 10px;
+    border: none;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 10px 10px 60px rgba(0, 0, 0, 0.25);
+    font-weight: 800;
+    font-size: 25px;
+    line-height: 30px;
+    color: #FFFFFF;
+    transition: all 500ms ease;
+    margin-bottom: 50px;
+}
+
+main form input[name='next']:hover,
+main form input[name='finish']:hover {
+    box-shadow: none;
+    transition: all 500ms ease;
+}

@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    font-family: 'Rubik', sans-serif;
+    font-style: normal;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: #ECF1F5;
+    display: flex;
+    flex-direction: column;
+}
+
+form {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 50%;
+    align-items: center;
+}
+
+.erreur {
+    width: 100%;
+    height: 50px;
+    background-color: #ff000080;
+    color: #000000;
+    font-size: 20px;
+    border: 2px solid #FF0000;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+form h1 {
+    text-align: center;
+}
+
+form input {
+    width: 100%;
+    height: 70px;
+    background: #FFFFFF;
+    border: 2px solid #D0D0D0;
+    padding: 20px;
+    transition: all 300ms ease;
+    outline: 0 solid #FEDB01;
+    font-weight: 400;
+    font-size: 18px;
+    border-radius: 10px;
+}
+
+form input[name='chercheNumSecu'] {
+    height: 70px;
+    background: #FEDB01;
+    border-radius: 10px;
+    border: none;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 10px 10px 60px rgba(0, 0, 0, 0.25);
+    font-weight: 800;
+    font-size: 25px;
+    line-height: 30px;
+    color: #FFFFFF;
+    transition: all 500ms ease;
+}
+
+form input[name='chercheNumSecu']:hover {
+    box-shadow: none;
+    transition: all 500ms ease;
+}
+
+form input:focus {
+    z-index: 2;
+    outline: 5px solid #FEDB01;
+    transition: all 300ms ease;
+}
