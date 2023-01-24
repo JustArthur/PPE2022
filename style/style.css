@@ -132,6 +132,28 @@ main .gauche .formulaire input:focus {
     transition: all 300ms ease;
 }
 
+main .gauche .formulaire .div_captcha {
+    width: 80%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+main .gauche .formulaire .div_captcha input {
+    width: 100%;
+}
+
+main .gauche .formulaire .div_captcha .chiffre {
+    position: absolute;
+    right: 10px;
+    padding: 20px;
+    background-color: red;
+    color: #FFFFFF;
+    border-radius: 5px;
+    z-index: 3;
+    text-decoration: line-through 2px black;
+    font-weight: 500;
+}
 
 
 
