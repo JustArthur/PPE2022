@@ -1,6 +1,10 @@
 <?php
-
     include_once('../include.php');
+
+    if($_SESSION['creer_admission'][0] != true) {
+        header('Location: num_secu_creer');
+        exit;
+    }
 
     $dateMax = date('Y-m-d', time());
 
@@ -24,11 +28,26 @@
 
             if($civilite != 'none') {
                 $numSecu = $_SESSION['patient'][0];
-                $cni = $_SESSION['patient'][11];
-                $carteMutuelle = $_SESSION['patient'][12];
-                $carteVitale = $_SESSION['patient'][13];
-                $livretFamille = $_SESSION['patient'][14];
+                $bool = $_SESSION['patient'][11];
+
+                //Voir si il est mineur ou non
+                $dateDepart = $dateNaissance;
+                $dateAujourdhui = date('Y-m-d');
+            
+                $duree = 18;
+            
+                $dateDepartTimestamp = strtotime($dateDepart);
+            
+                $dateFin = date('Y-m-d', strtotime('+'.$duree.' year', $dateDepartTimestamp));
+            
+                if($dateFin >= $dateAujourdhui) {
+                    $mineur = true;
+                } else {
+                    $mineur = false;
+                }
     
+
+                //Les sessions
                 $_SESSION['patient'] = array(
                     $numSecu, //0
                     $civilite, //1
@@ -41,10 +60,16 @@
                     $ville, //8
                     $email, //9
                     $telephone, //10
-                    $cni, //11
-                    $carteMutuelle, //12
-                    $carteVitale, //13
-                    $livretFamille, //14
+                    $bool, //11
+                    $mineur //12
+                );
+
+                $_SESSION['creer_admission'] = array(
+                    true, //0
+                    true, //1
+                    false, //2
+                    false, //3
+                    false //4 
                 );
     
                 header('Location: contact_patient');

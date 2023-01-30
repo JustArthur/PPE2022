@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="../style/panel.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Bienvenue, <?= $_SESSION['utilisateur'][1] ?></title>
+    <title>Bienvenue, <?= $_SESSION['utilisateur'][0] . ' ' . $_SESSION['utilisateur'][1] ?></title>
 </head>
 <body>
 

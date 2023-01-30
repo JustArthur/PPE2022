@@ -7,6 +7,14 @@
     $_SESSION['hospitalisation'] = array();
     $_SESSION['couvertureSociale'] = array();
 
+    $_SESSION['creer_admission'] = array(
+        false, //0
+        false, //1
+        false, //2
+        false, //3
+        false //4
+    );
+
     $erreur = '';
 
     if(!empty($_POST)) {
@@ -57,18 +65,31 @@
                         $chercheNumSecu['ville'], //8
                         $chercheNumSecu['email'], //9
                         $chercheNumSecu['telephone'], //10
-                        $chercheNumSecu['cni'], //11
-                        $chercheNumSecu['carteMutuelle'], //12
-                        $chercheNumSecu['carteVitale'], //13
-                        $chercheNumSecu['livretFamille'], //14
-                        $patientDisponible = true //15
+                        true, //11
+                        true //12
+                    );
+
+                    $_SESSION['creer_admission'] = array(
+                        true, //0
+                        false, //1
+                        false, //2
+                        false, //3
+                        false //4
                     );
 
                     header('Location: ajout_admission');
                     exit;
 
                 } else {
-                    $_SESSION['patient'] = array($numSecu, '', '', '', '', '', '', '', '', '', '', '', '', $patientDisponible = false);
+                    $_SESSION['patient'] = array($numSecu, '', '', '', '', '', '', '', '', '', false);
+
+                    $_SESSION['creer_admission'] = array(
+                        true, //0
+                        false, //1
+                        false, //2
+                        false, //3
+                        false //4
+                    );
 
                     header('Location: ajout_admission');
                     exit;

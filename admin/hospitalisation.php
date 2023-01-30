@@ -3,6 +3,11 @@
 
     $_SESSION['hospitalisation'] = array();
 
+    if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true) {
+        header('Location: num_secu_creer');
+        exit;
+    }
+
     $dateMin = date('Y-m-d', time());
     $erreur = '';
 
@@ -21,6 +26,14 @@
                     $dateHospitalisation, //1
                     $heureHospitalisation, //2
                     $docteur //3
+                );
+
+                $_SESSION['creer_admission'] = array(
+                    true, //0
+                    true, //1
+                    true, //2
+                    true, //3
+                    false //4
                 );
 
                 header('Location: couverture');
@@ -68,9 +81,11 @@
 
             <select name="docteur" id="">
                 <option hidden value=0>Choisir le médecin</option>
+
                 <?php foreach($docteur as $req) { ?>
                     <option value=<?= $req['id'] ?> ><?= $req['nom'] . ' ' . $req['prenom'] ?></option>
                 <?php } ?>
+                
             </select>
 
             <input type="submit" name="next" value="Continuer">

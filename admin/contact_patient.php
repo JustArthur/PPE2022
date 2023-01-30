@@ -1,6 +1,11 @@
 <?php
     include_once('../include.php');
 
+    if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true) {
+        header('Location: num_secu_creer');
+        exit;
+    }
+
     $PersonneConfiance = $DB->prepare("SELECT * FROM contact WHERE idPatient = ? AND confiance = 1");
     $PersonneConfiance->execute([$_SESSION['patient'][0]]);
     $PersonneConfiance = $PersonneConfiance->fetch();
@@ -56,6 +61,14 @@
                 $telPrevenir, //2
                 $adressePrevenir, //3
                 $_SESSION['patient'][0] //4
+            );
+
+            $_SESSION['creer_admission'] = array(
+                true, //0
+                true, //1
+                true, //2
+                false, //3
+                false //4
             );
 
             header('Location: hospitalisation');

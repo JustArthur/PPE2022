@@ -26,24 +26,26 @@
                         
                             $userinfo = $requser->fetch();
                             $_SESSION['utilisateur'] = array(
-                                $userinfo['nom'],
-                                $userinfo['prenom'],
-                                $userinfo['service'],
-                                $userinfo['role']
+                                $userinfo['nom'], //0
+                                $userinfo['prenom'], //1
+                                $userinfo['service'], //2
+                                $userinfo['role'] //3
                             );
             
                             header("Location: admin/panel");
                             exit();
             
                         } else {
-                            $erreur = "Mauvais nom d'utilisateur ou mot de passe !";
+                            $erreur = "Mauvais identifiant ou mot de passe.";
                         }
                     } else {
-                        $erreur = "Champs non-renseigné.";
+                        $erreur = "Les champs identifiant et mot de passe sont vides.";
                     }
                 } else {
-                    $erreur = 'Captcha incorrect.';
+                    $erreur = 'La réponse au captcha incorrect.';
                 }
+            } else {
+                $erreur = "Certains champs sont vides.";
             }
         }
     }
@@ -60,7 +62,7 @@
 
     <link rel="stylesheet" href="style/style.css">
 
-    <title>Document</title>
+    <title>Connexion</title>
 </head>
 <body>
     <main>

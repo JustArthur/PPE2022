@@ -1,6 +1,11 @@
 <?php
     include_once('../include.php');
 
+    if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true && $_SESSION['creer_admission'][3] != true) {
+        header('Location: num_secu_creer');
+        exit;
+    }
+
     $couverture = $DB->prepare("SELECT * FROM couverture WHERE numSecu = ?");
     $couverture->execute([$_SESSION['patient'][0]]);
     $couverture = $couverture->fetch();
@@ -13,8 +18,7 @@
             $couverture['ald'], //3
             $couverture['nomMutuelle'], //4
             $couverture['numAdherent'], //5
-            $couverture['idChambre'], //6
-            $couvertureExiste = true //7
+            true //6
         );
 
         switch($_SESSION['couvertureSociale'][2]) {
@@ -42,7 +46,7 @@
         }
 
     } else {
-        $_SESSION['couvertureSociale'] = array($_SESSION['patient'][0], '', '', '', '', '', '', $couvertureExiste = false);
+        $_SESSION['couvertureSociale'] = array($_SESSION['patient'][0], '', '', '', '', '', '', false);
     }
 
     if(!empty($_POST)) {
@@ -51,6 +55,8 @@
         if(isset($_POST['next'])) {
 
             if(isset($assure) != 0 && isset($ald) != 0 && isset($chambre) != 0) {
+                $bool = $_SESSION['couvertureSociale'][7];
+
                 $_SESSION['couvertureSociale'] = array(
                     $_SESSION['patient'][0], //0
                     $organisme, //1
@@ -58,8 +64,18 @@
                     $ald, //3
                     $nomMutuelle, //4
                     $numAdherent, //5
-                    $chambre //6
+                    $chambre, //6
+                    $bool //7
                 );
+
+                $_SESSION['creer_admission'] = array(
+                    true, //0
+                    true, //1
+                    true, //2
+                    true, //3
+                    true //4
+                );
+
 
                 header('Location: document');
                 exit;
@@ -111,7 +127,7 @@
 
             <input required type="text" name="nomMutuelle" id="" value="<?= $_SESSION['couvertureSociale'][4] ?>" placeholder="Nom de la mutuelle ou de l'assurance">
 
-            <input required type="text" name="numAdherent" value="<?= $_SESSION['couvertureSociale'][1] ?>" id="" placeholder="Numéro d'ahérent">
+            <input required type="text" name="numAdherent" value="<?= $_SESSION['couvertureSociale'][5] ?>" id="" placeholder="Numéro d'ahérent">
 
             <select name="chambre" id="">
                 <option hidden value=0 > Chambre particulière ?</option>

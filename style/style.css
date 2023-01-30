@@ -102,8 +102,9 @@ main .gauche .formulaire form input[name='password'] {
     border-bottom: none;
 }
 
-main .gauche .formulaire form input[name='captcha'] {
+main .gauche .formulaire form input[name='reponse'] {
     border-radius: 0 0 10px 10px;
+    width: 100%;
 }
 
 main .gauche .formulaire form input[name='connexion'] {
@@ -137,10 +138,6 @@ main .gauche .formulaire .div_captcha {
     position: relative;
     display: flex;
     align-items: center;
-}
-
-main .gauche .formulaire .div_captcha input {
-    width: 100%;
 }
 
 main .gauche .formulaire .div_captcha .chiffre {
