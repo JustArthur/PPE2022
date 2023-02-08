@@ -6,8 +6,8 @@
         exit;
     }
 
-    $preadmission = $DB->prepare("SELECT * FROM preadmission WHERE status != 'Terminé' AND status != 'Annulé'");
-    $preadmission->execute();
+    $preadmission = $DB->prepare("SELECT * FROM preadmission WHERE idPatient = ? AND status = 'Pas réalisé'");
+    $preadmission->execute([$_SESSION['patientPrea']]);
     $preadmission = $preadmission->fetchAll();
 ?>
 
@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="../style/navBar.css">
     <link rel="stylesheet" href="../style/voirAdmission.css">
 
-    <title>Toutes les pré-admissions</title>
+    <title>Toutes les pré-admissions de <?= $_SESSION['patientPrea'] ?></title>
 </head>
 <body>
     <?php require_once('src/navbar.php'); ?>
@@ -55,10 +55,6 @@
 
                     <ul class="list-patient">
                         <li class="list-item-patient">
-                            <strong style="text-decoration: underline;">Status :</strong> <?= $all['status'] ?>
-                        </li><br>
-
-                        <li class="list-item-patient">
                             <strong style="text-decoration: underline;">Numéro de sécurité sociale :</strong> <?= $info_patient['numSecu'] ?>
                         </li><br>
 
@@ -84,7 +80,6 @@
 
                         <form method="POST" class="btn">
                             <a href="modif_admission?id=<?= $all['id']?>" class="modif">Modifier la préadmission</a>
-                            <a href="verif_supp?id=<?= $all['id'] ?>" class="supp">Supprimer la préadmission</a>
                         </form>
                     </ul>
                 </li>

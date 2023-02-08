@@ -3,6 +3,11 @@
     ini_set("display_errors", 1);
     include_once('include.php');
 
+    if(isset($_SESSION['utilisateur'][5])) {
+        header('Location: admin/panel');
+        exit;
+    }
+
     $code = random_int(1000, 9999); 
 
     if(isset($_POST)) {
@@ -25,12 +30,34 @@
                         if ($userexist == 1 ) {
                         
                             $userinfo = $requser->fetch();
+                            switch($userinfo['role']) {
+                                case 1:
+                                    $role = 'Secretaire';
+                                    break;
+
+                                case 2:
+                                    $role = 'Administrateur';
+                                    break;
+
+                                case 3:
+                                    $role = 'Medecin';
+                                    break;
+                            }
+                            
                             $_SESSION['utilisateur'] = array(
                                 $userinfo['nom'], //0
                                 $userinfo['prenom'], //1
                                 $userinfo['service'], //2
-                                $userinfo['role'] //3
+                                $userinfo['role'], //3
+                                $role, //4
+                                $userinfo['id'] //5
                             );
+
+                            $textLog = "Connexion d'un utilisateur";
+                            $dateLog = date('Y-m-d H:i');
+                        
+                            $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+                            $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
             
                             header("Location: admin/panel");
                             exit();
@@ -62,7 +89,7 @@
 
     <link rel="stylesheet" href="style/style.css">
 
-    <title>Connexion</title>
+    <title>Connexion - Clinique LPF</title>
 </head>
 <body>
     <main>

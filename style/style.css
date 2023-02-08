@@ -8,6 +8,7 @@
     list-style: none;
     font-family: 'Rubik', sans-serif;
     font-style: normal;
+    user-select: none;
 }
 
 body {
@@ -42,7 +43,7 @@ main .gauche h1 {
 }
 
 main .gauche h1 span {
-    color: #FEDB01;
+    color: #fe5900;
 }
 
 main .gauche .formulaire {
@@ -88,7 +89,7 @@ main .gauche .formulaire form input {
     border: 2px solid #D0D0D0;
     padding: 20px;
     transition: all 300ms ease;
-    outline: 0 solid #FEDB01;
+    outline: 0 solid #fe5900;
     font-weight: 400;
     font-size: 18px;
 }
@@ -109,7 +110,7 @@ main .gauche .formulaire form input[name='reponse'] {
 
 main .gauche .formulaire form input[name='connexion'] {
     height: 70px;
-    background: #FEDB01;
+    background: #fe5900;
     border-radius: 10px;
     border: none;
     margin-top: 30px;
@@ -129,7 +130,7 @@ main .gauche .formulaire form input[name='connexion']:hover {
 
 main .gauche .formulaire input:focus {
     z-index: 2;
-    outline: 5px solid #FEDB01;
+    outline: 5px solid #fe5900;
     transition: all 300ms ease;
 }
 

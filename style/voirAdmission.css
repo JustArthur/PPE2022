@@ -8,6 +8,7 @@
     list-style: none;
     font-family: 'Rubik', sans-serif;
     font-style: normal;
+    user-select: none;
 }
 
 body {
@@ -43,7 +44,7 @@ main ul.list li.list-item ul.list-patient .btn {
     justify-content: center;
 }
 
-main ul.list li.list-item ul.list-patient .btn button{
+main ul.list li.list-item ul.list-patient .btn a {
     padding: 10px;
     border-radius: 5px;
     color: #FFFFFF;
@@ -51,11 +52,63 @@ main ul.list li.list-item ul.list-patient .btn button{
     cursor: pointer;
 }
 
-main ul.list li.list-item ul.list-patient .btn button.supp {
+main ul.list li.list-item ul.list-patient .btn a {
     background-color: red;
 }
 
-main ul.list li.list-item ul.list-patient .btn button.modif {
+main ul.list li.list-item ul.list-patient .btn a.modif {
     background-color: #FEDB01;
     color: #000000;
+}
+
+.notif {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+    display: flex;
+}
+
+.notif form.confirm {
+    margin: auto;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding: 20px 20px;
+    border-radius: 5px;
+}
+
+.notif form.confirm h3 {
+    text-align: center;
+}
+
+.notif form.confirm .btns {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.notif form.confirm .btns button {
+    padding: 10px 30px;
+    cursor: pointer;
+}
+
+.notif form.confirm .btns button:first-child {
+    background-color: red;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 3px;
+}
+
+.notif form.confirm .btns button:last-child {
+    background-color: green;
+    color: white;
+    font-size: 15px;
+    border: none;
+    border-radius: 3px;
 }

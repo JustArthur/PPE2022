@@ -7,7 +7,7 @@
             <ul class="dropdown">
                 <li><a href="num_secu_creer">Créer une pré-admision</a></li>
                 <li><a href="num_secu_modif">Modifier une pré-admision</a></li>
-                <li><a href="#">Supprimer une pré-admision</a></li>
+                <li><a href="num_secu_supp">Supprimer une pré-admision</a></li>
             </ul>
         </li>
         <?php } ?>
@@ -28,9 +28,10 @@
                 <li><a href="#">Supprimer un service</a></li>
             </ul>
         </li>
+
+        <li><a href="logs.php">Journaux du site</a></li>
         <?php } ?>
 
-        <li><a href="">Statistiques</a></li>
         <li><a href="deconnexion.php">Se déconnecter</a></li>
     </ul>
 </nav>

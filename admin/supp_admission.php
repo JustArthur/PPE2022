@@ -14,7 +14,7 @@
         $cherchePrea->execute([$_GET['id']]);
         $cherchePrea = $cherchePrea->fetch();
 
-        $_SESSION['modif_admission'] = array (
+        $_SESSION['supp_admission'] = array (
             $cherchePrea['id'], //0
             $cherchePrea['idPatient'], //1
             $cherchePrea['idMedecin'], //2
@@ -24,15 +24,15 @@
         );
 
         $chercherOperation = $DB->prepare("SELECT * FROM operations WHERE id = ? AND idPatient = ?");
-        $chercherOperation->execute([$_SESSION['modif_admission'][3], $_SESSION['modif_admission'][1]]);
+        $chercherOperation->execute([$_SESSION['supp_admission'][3], $_SESSION['supp_admission'][1]]);
         $chercherOperation = $chercherOperation->fetch();
 
         $docteur_Preadmission = $DB->prepare("SELECT id, nom, prenom FROM personnel WHERE id = ?");
-        $docteur_Preadmission->execute([$_SESSION['modif_admission'][2]]);
+        $docteur_Preadmission->execute([$_SESSION['supp_admission'][2]]);
         $docteur_Preadmission = $docteur_Preadmission->fetch();
     
         $docteur = $DB->prepare("SELECT * FROM personnel WHERE role = 3 AND id != ?");
-        $docteur->execute([$_SESSION['modif_admission'][2]]);
+        $docteur->execute([$_SESSION['supp_admission'][2]]);
         $docteur = $docteur->fetchAll();
 
     } else {
@@ -71,23 +71,9 @@
         extract($_POST);
 
         if(isset($_POST['next'])) {
-            $updateOperation = $DB->prepare("UPDATE operations SET dateOperation = ?, heureOperation = ?, idMedecin = ? WHERE id = ?;");
-            $updateOperation->execute([$dateHospitalisation, $heureHospitalisation, $docteur, $_SESSION['modif_admission'][3]]);
-            
-            $updatePreadmission = $DB->prepare("UPDATE preadmission SET idMedecin = ? WHERE idOperation = ?");
-            $updatePreadmission->execute([$docteur, $_SESSION['modif_admission'][3]]);
-
-            $_SESSION['preadmission'] = array(
-                $_SESSION['modif_admission'][0], //0
-                $_SESSION['modif_admission'][1], //1
-                $docteur, //2
-                $_SESSION['modif_admission'][3], //3
-                $_SESSION['modif_admission'][4], //4
-                $_SESSION['modif_admission'][5] //5
-            );
-
-            header('Location: couverture_modif');
+            header('Location: couverture_supp');
             exit;
+
         }
     }
 ?>
@@ -107,30 +93,30 @@
     <?php require_once('src/navbar.php'); ?>
 
     <main>
-        <h2>Modifier la pré-admission</h2>
+        <h2>Supprimer la pré-admission</h2>
 
         <form method="post">
 
             <?php if($erreur != '') { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
 
-            <select name="operation" id="">
+            <select style="cursor:not-allowed" disabled name="operation" id="">
                 <option hidden value=0>Choisir l'opération</option>
                 <option value=1 <?= $Ambulatoire ?> >Ambulatoire chirugie</option>
                 <option value=2 <?= $hospitalisation ?> >Hospitalisation (une nuit minimum)</option>
             </select>
 
-            <input type="date" value="<?= $chercherOperation['dateOperation'] ?>" name="dateHospitalisation" id="" min="<?= $dateMin ?>">
+            <input type="date" style="cursor:not-allowed" disabled value="<?= $chercherOperation['dateOperation'] ?>" name="dateHospitalisation" id="" min="<?= $dateMin ?>">
 
-            <input type="time" value="<?= $chercherOperation['heureOperation'] ?>" name="heureHospitalisation" id="">
+            <input type="time" style="cursor:not-allowed" disabled value="<?= $chercherOperation['heureOperation'] ?>" name="heureHospitalisation" id="">
 
-            <select name="docteur" id="">
+            <select style="cursor:not-allowed" disabled name="docteur" id="">
                 <option value=<?= $docteur_Preadmission['id'] ?> ><?= $docteur_Preadmission['nom'] . ' ' . $docteur_Preadmission['prenom'] ?></option>
                 <?php foreach($docteur as $req) { ?>
                     <option value=<?= $req['id'] ?> ><?= $req['nom'] . ' ' . $req['prenom'] ?></option>
                 <?php } ?>
             </select>
 
-            <input type="submit" name="next" value="Modifier les informations">
+            <input type="submit" name="next" value="Continuer pour supprimer">
         </form>
     </main>
 </body>

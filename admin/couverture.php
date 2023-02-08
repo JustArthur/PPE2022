@@ -1,6 +1,11 @@
 <?php
     include_once('../include.php');
 
+    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel');
+        exit;
+    }
+
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true && $_SESSION['creer_admission'][3] != true) {
         header('Location: num_secu_creer');
         exit;

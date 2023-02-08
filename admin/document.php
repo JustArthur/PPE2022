@@ -1,5 +1,10 @@
 <?php
     include_once('../include.php');
+
+    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel');
+        exit;
+    }
     
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true && $_SESSION['creer_admission'][3] != true && $_SESSION['creer_admission'][4] != true) {
         header('Location: num_secu_creer');
@@ -7,6 +12,7 @@
     }
 
     $erreur = '';
+    $dateAujourdhui = date('Y-m-d');
 
     if(!empty($_POST)) {
         extract($_POST);
@@ -94,6 +100,7 @@
 
         if($valid) {
             if(isset($_SESSION['patient'][11]) == false) { //Si le patient n'existe pas
+
                 $insertPatient = $DB->prepare("INSERT INTO patient (numSecu, civilite, nomNaissance, nomEpouse, prenom, dateNaissance, adresse, codePostal, ville, email, telephone, cni, carteVitale, carteMutuelle, livretFamille) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
                 $insertPatient->execute([$_SESSION['patient'][0],$_SESSION['patient'][1],$_SESSION['patient'][2],$_SESSION['patient'][3],$_SESSION['patient'][4],$_SESSION['patient'][5],$_SESSION['patient'][6],$_SESSION['patient'][7],$_SESSION['patient'][8],$_SESSION['patient'][9],$_SESSION['patient'][10], $cni, $carteVitale, $carteMutuelle, $livretFamille]);
 
@@ -174,9 +181,23 @@
             $selectOperationId->execute([$_SESSION['patient'][0], $_SESSION['hospitalisation'][1], $_SESSION['hospitalisation'][2]]);
             $selectOperationId = $selectOperationId->fetch();
 
-            $insertPreadmission = $DB->prepare("INSERT INTO preadmission (idPatient, idMedecin, idOperation, idChambre) VALUES(?, ?, ?, ?);");
-            $insertPreadmission->execute([$_SESSION['patient'][0], $_SESSION['hospitalisation'][3], $selectOperationId['id'], $_SESSION['couvertureSociale'][6]]);
+            $insertPreadmission = $DB->prepare("INSERT INTO preadmission (idPatient, idMedecin, idOperation, idChambre, dateAdmission, faitPar) VALUES(?, ?, ?, ?, ?, ?);");
+            $insertPreadmission->execute([$_SESSION['patient'][0], $_SESSION['hospitalisation'][3], $selectOperationId['id'], $_SESSION['couvertureSociale'][6], $dateAujourdhui, $_SESSION['utilisateur'][5]]);
 
+            $textLog = "Création d'une nouvelle préadmission";
+            $dateLog = date('Y-m-d H:i');
+        
+            $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+            $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
+
+            $_SESSION['creer_admission'] = array(
+                true, //0
+                false, //1
+                false, //2
+                false, //3
+                false //4
+            );
+            
             header('Location: num_secu_creer');
             exit;
         }
@@ -220,7 +241,7 @@
                 <input required type="file" name="carteMutuelle" id="">
             </label>
 
-            <?php if(isset($_SESSION['patient'][12])) { ?>
+            <?php if($_SESSION['patient'][12]) { ?>
             <label for="livretFamille">
                 Livret de famille (si le patient est mineur)
                 <input type="file" name="livretFamille" id="">

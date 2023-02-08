@@ -66,11 +66,11 @@
                             break;
                         
                         case 'En cours':
-                            $erreur = 'La pré-admission est en cours, impossible de la modifier.';
+                            $erreur = 'La pré-admission est en cours, impossible de la supprimer.';
                             break;
                         
                         case 'Pas réalisé';
-                            header('Location: modif_admission');
+                            header('Location: supp_admission');
                             exit;
 
                             break;
@@ -79,7 +79,7 @@
                 } elseif($chercherPreAdmissionCount > 1) {
                     $_SESSION['patientPrea'] = $chercherPreAdmission['idPatient'];
 
-                    header('Location: voir_preadmission_modif');
+                    header('Location: voir_preadmission_supp');
                     exit;
 
                 } else {
@@ -108,7 +108,7 @@
     <?php require_once('src/navbar.php'); ?>
 
     <form method="post">
-        <h1>Modifier une préadmission</h1>
+        <h1>Supprimer une préadmission</h1>
 
         <?php if($erreur != '') { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
 
