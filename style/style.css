@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    font-family: 'Rubik', sans-serif;
+    font-style: normal;
+    user-select: none;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+}
+
+main {
+    margin: auto;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+}
+
+main .gauche {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 60px;
+}
+
+main .gauche h1 {
+    font-weight: 700;
+    font-size: 50px;
+    color: #000000;
+    text-align: center;
+}
+
+main .gauche h1 span {
+    color: #fe5900;
+}
+
+main .gauche .formulaire {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+}
+
+main .gauche .formulaire .erreur {
+    width: 80%;
+    height: 50px;
+    background-color: #ff000080;
+    color: #000000;
+    font-size: 20px;
+    border: 2px solid #FF0000;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+main .gauche .formulaire h3 {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 30px;
+    color: #000000;
+    text-align: center;
+}
+
+main .gauche .formulaire form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+main .gauche .formulaire form input {
+    width: 80%;
+    height: 70px;
+    background: #FFFFFF;
+    border: 2px solid #D0D0D0;
+    padding: 20px;
+    transition: all 300ms ease;
+    outline: 0 solid #fe5900;
+    font-weight: 400;
+    font-size: 18px;
+}
+
+main .gauche .formulaire form input:invalid {
+    animation: shake 300ms;
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(8px);
+    }
+
+    50% {
+        transform: translateX(-8px);
+    }
+
+    75% {
+        transform: translateX(8px);
+    }
+}
+
+main .gauche .formulaire form input[name='identifiant'] {
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+
+main .gauche .formulaire form input[name='password'] {
+    border-bottom: none;
+}
+
+main .gauche .formulaire form input[name='reponse'] {
+    border-radius: 0 0 10px 10px;
+    width: 100%;
+}
+
+main .gauche .formulaire form input[name='connexion'] {
+    height: 70px;
+    background: #fe5900;
+    border-radius: 10px;
+    border: none;
+    margin-top: 30px;
+    cursor: pointer;
+    box-shadow: 10px 10px 60px rgba(0, 0, 0, 0.25);
+    font-weight: 800;
+    font-size: 25px;
+    line-height: 30px;
+    color: #FFFFFF;
+    transition: all 500ms ease;
+}
+
+main .gauche .formulaire form input[name='connexion']:hover {
+    box-shadow: none;
+    transition: all 500ms ease;
+}
+
+main .gauche .formulaire input:focus {
+    z-index: 2;
+    outline: 5px solid #fe5900;
+    transition: all 300ms ease;
+}
+
+main .gauche .formulaire .div_captcha {
+    width: 80%;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+main .gauche .formulaire .div_captcha .chiffre {
+    position: absolute;
+    right: 10px;
+    padding: 20px;
+    background-color: red;
+    color: #FFFFFF;
+    border-radius: 5px;
+    z-index: 3;
+    text-decoration: line-through 2px black;
+    font-weight: 500;
+}
+
+
+
+main .droite {
+    height: 100%;
+    width: 50%;
+    background-image: url(../img/fond.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+
+@media screen and (max-width: 650px) {
+    main .droite {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -2;
+        background: linear-gradient(0deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/fond.jpg);
+        background-size: cover;
+        background-position: center;
+    }
+
+    main .gauche {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    main .gauche .formulaire form input:not(input[name='connexion']) {
+        background: #ffffff50;
+        border-color: #000000;
+    }
+}

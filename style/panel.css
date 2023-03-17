@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+    font-family: 'Poppins', sans-serif;
+    font-style: normal;
+    user-select: none;
+}
+
+body {
+    height: 100vh;
+    width: 100%;
+    background-color: #ECF1F5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+main {
+    width: 86%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+}
+
+ul.list-prea {
+    width: 100%;
+    height: max-content;
+    display: flex;
+    gap: 35px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+
+
+
+
+ul.list-prea a {
+    background-color: white;
+    padding: 30px 20px;
+    width: 245px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid #c8c8c8;
+    border-radius: 2px;
+    cursor: default;
+}
+
+ul.list-prea a:last-child {
+    background-color: transparent;
+    border: 2px dashed #00A3FE;
+    border-radius: 2px;
+    transition: all 500ms ease;
+    color: #00A3FE;
+    cursor: pointer;
+}
+
+ul.list-prea a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    border-radius: 0 0 2px 2px;
+    transition: all 500ms ease;
+}
+
+ul.list-prea a:nth-child(1)::before {
+    background-color: #FE5900;
+}
+
+ul.list-prea a:nth-child(2)::before {
+    background-color: #00A3FE;
+}
+
+ul.list-prea a:nth-child(3)::before {
+    background-color: #FE0000;
+}
+
+ul.list-prea a:nth-child(4)::before {
+    background-color: #9500ff;
+}
+
+ul.list-prea a:nth-child(5)::before {
+    background-color: #0AA507;
+}
+
+
+
+
+ul.list-prea a:hover::before {
+    height: 100%;
+    transition: all 500ms ease;
+}
+
+ul.list-prea a:last-child:hover {
+    color: #FFFFFF;
+    background-color: #00A3FE;
+    transition: all 500ms ease;
+}
+
+
+
+
+
+
+
+
+ul.list-prea a .titre {
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 18px;
+    z-index: 3;
+    transition: all 500ms ease;
+}
+
+
+
+
+
+
+
+ul.list-prea a:nth-child(1) .titre {
+    background: rgba(254, 89, 0, 0.3);
+    color: #FE5900;
+}
+
+ul.list-prea a:nth-child(2) .titre {
+    background: rgba(0, 163, 254, 0.3);
+    color: #00A3FE;
+}
+
+ul.list-prea a:nth-child(3) .titre {
+    background: rgba(254, 0, 0, 0.3);
+    color: #FE0000;
+}
+
+ul.list-prea a:nth-child(4) .titre {
+    background: rgba(149, 0, 255, 0.302);
+    color: #9500ff;
+}
+
+ul.list-prea a:nth-child(5) .titre {
+    background: rgba(10, 165, 7, 0.3);
+    color: #0AA507;
+}
+
+
+
+
+
+
+ul.list-prea a:hover:nth-child(1) .titre {
+    background-color: #ff742a;
+    color: #FFFFFF;
+}
+
+ul.list-prea a:hover:nth-child(2) .titre {
+    background-color: #28b4ff;
+    color: #FFFFFF;
+}
+
+ul.list-prea a:hover:nth-child(3) .titre {
+    background-color: #ff3e3e;
+    color: #FFFFFF;
+}
+
+ul.list-prea a:hover:nth-child(4) .titre {
+    background-color: #ba5aff;
+    color: #FFFFFF;
+}
+
+ul.list-prea a:hover:nth-child(5) .titre {
+    background-color: #12b80f;
+    color: #FFFFFF;
+}
+
+
+
+
+
+
+
+ul.list-prea a .desc {
+    width: 205px;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 22px;
+    margin-top: 15px;
+    z-index: 3;
+    transition: all 500ms ease;
+    color: #000000;
+}
+
+ul.list-prea a:hover .desc {
+    color: #FFFFFF;
+    transition: all 500ms ease;
+}
+
+
+
+
+
+
+ul.list-prea a .desc span.color {
+    font-weight: 700;
+    transition: all 500ms ease;
+}
+
+ul.list-prea a:nth-child(1) .desc span.color,
+.profil .infos span.color {
+    color: #FE5900;
+}
+
+ul.list-prea a:nth-child(2) .desc span.color {
+    color: #00A3FE;
+}
+
+ul.list-prea a:nth-child(3) .desc span.color {
+    color: #FE0000;
+}
+
+ul.list-prea a:nth-child(4) .desc span.color {
+    color: #9500ff;
+}
+
+ul.list-prea a:nth-child(5) .desc span.color {
+    color: #0AA507;
+}
+
+
+
+
+
+
+
+ul.list-prea a:hover .desc span.color {
+    color: #FFFFFF;
+    transition: all 500ms ease;
+}
+
+
+
+
+
+
+
+
+
+
+.profil {
+    width: 100%;
+    height: max-content;
+    background-color: white;
+    border: 1px solid #c8c8c8;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.profil .infos {
+    text-align: center;
+    margin: 20px 0 15px 0;
+}
+
+.profil .infos .nom {
+    font-weight: 600;
+    font-size: 30px;
+    color: #000000;
+}
+
+.profil .infos .role {
+    font-size: 20px;
+    color: #B9B9B9;
+}
+
+.profil .last-prea {
+    width: 98%;
+    height: 70%;
+}
+
+.profil .last-prea ul.list-prea-last {
+    height: 94%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item {
+    background-color: white;
+    border: 1px solid #C8C8C8;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item:last-child {
+    margin-bottom: 20px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item .infos-prea {
+    display: flex;
+    gap: 40px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item .btns {
+    display: flex;
+    gap: 20px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item .btns a {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item .btns a:first-child {
+    background-color: #FE5900;
+    font-weight: 600;
+    font-size: 20px;
+    color: #FFFFFF;
+}
+
+.profil .last-prea ul.list-prea-last li.list-item .btns a:last-child {
+    background-color: #00A3FE;
+    font-weight: 600;
+    font-size: 20px;
+    color: #FFFFFF;
+}
