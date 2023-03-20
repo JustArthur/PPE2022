@@ -47,11 +47,38 @@
         }   
     ?> 
     <?php
-        $reqpersonnels= $DB->prepare('SELECT nom,prenom,service,role FROM personnel');
+        $reqpersonnels= $DB->prepare('SELECT id,nom,prenom,service,role FROM personnel');
         $reqpersonnels->execute();
         $personnels = $reqpersonnels->fetchall();
         foreach($personnels as $personnel){
-            echo $personnel['nom'].'<span>  </span>',$personnel['prenom'].'</span>',$personnel['service'].'</span>',$personnel['role'].'<br>';
+           
         }
     ?>
+    <table border="2">
+        <caption>Personnelle </caption>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>prenom</th>
+                    <th>service</th>
+                    <th>role</th>
+                    <th> action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($personnels as $personnel):?>
+                    <tr>
+                        <td> <?php echo $personnel['nom'];?></td>
+                        <td> <?php echo $personnel['prenom'];?></td>
+                        <td> <?php echo $personnel['service'];?></td>
+                        <td> <?php echo $personnel['role'];?></td>
+
+                        <td>
+                            <a href="ModifPersonnel.php?id=<?= $personnel['id'];?>">Modifier</a>
+                            <a href="SupprPersonnel.php?id=<?= $personnel['id'];?>">Supprimer</a>
+                        </td>
+                    </tr>
+                <?php endforeach ?>
+            </tbody>
+    </table>
 </html>
