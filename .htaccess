@@ -1,0 +1,7 @@
+DirectoryIndex index.php
+
+Options -Indexes
+
+# RewriteEngine On
+# RewriteRule ^modif_admission/([0-9]+)$ modif_admission?id=$1 [L]
+# RewriteRule ^verif_supp/([0-9]+)$ verif_supp?id=$1 [L]

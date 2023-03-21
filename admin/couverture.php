@@ -1,15 +1,17 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true && $_SESSION['creer_admission'][3] != true) {
-        header('Location: num_secu_creer');
+        header('Location: num_secu_creer.php');
         exit;
     }
+
+    $erreur = '';
 
     $couverture = $DB->prepare("SELECT * FROM couverture WHERE numSecu = ?");
     $couverture->execute([$_SESSION['patient'][0]]);
@@ -60,34 +62,40 @@
         if(isset($_POST['next'])) {
 
             if(isset($assure) != 0 && isset($ald) != 0 && isset($chambre) != 0) {
-                $bool = $_SESSION['couvertureSociale'][7];
+                $bool = $_SESSION['couvertureSociale'][6];
 
-                $select_chambre = $DB->prepare('SELECT chambre.id from chambre inner join typechambre on chambre.idType = typechambre.id where chambre.libre != 0 and where typechambre.id = ?');
+                $select_chambre = $DB->prepare('SELECT chambre.id from chambre inner join typechambre on chambre.idType = typechambre.id where typechambre.id = ? AND chambre.nbrPlaces != 0');
                 $select_chambre->execute([$chambre]);
                 $idChambre = $select_chambre->fetch();
 
-                $_SESSION['couvertureSociale'] = array(
-                    $_SESSION['patient'][0], //0
-                    $organisme, //1
-                    $assure, //2
-                    $ald, //3
-                    $nomMutuelle, //4
-                    $numAdherent, //5
-                    $idChambre, //6
-                    $bool //7
-                );
-
-                $_SESSION['creer_admission'] = array(
-                    true, //0
-                    true, //1
-                    true, //2
-                    true, //3
-                    true //4
-                );
-
-
-                header('Location: document');
-                exit;
+                if($idChambre) {
+                    $_SESSION['couvertureSociale'] = array(
+                        $_SESSION['patient'][0], //0
+                        $organisme, //1
+                        $assure, //2
+                        $ald, //3
+                        $nomMutuelle, //4
+                        $numAdherent, //5
+                        $idChambre['id'], //6
+                        $bool //7
+                    );
+    
+                    $_SESSION['creer_admission'] = array(
+                        true, //0
+                        true, //1
+                        true, //2
+                        true, //3
+                        true //4
+                    );
+    
+                    $update_chambre = $DB->prepare('UPDATE chambre SET nbrPlaces = nbrPlaces - 1 WHERE id = ?;');
+                    $update_chambre->execute([$_SESSION['couvertureSociale'][6]]);
+    
+                    header('Location: document.php');
+                    exit;
+                } else {
+                    $erreur = "Plus aucune chambre disponible.";
+                }
 
             } else {
                 $erreur = "Certain champs n'ont pas été remplis correctement.";
@@ -118,6 +126,7 @@
     <main>
         <h2>Couverture sociale du patient</h2>
         <form method="post">
+            <?php if($erreur != '') { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
             <input required type="text" name="organisme" value="<?= $_SESSION['couvertureSociale'][1] ?>" id="" placeholder="Organisme de sécurité sociale / Nom de la caisse d'assurance maladie">
 
             <input required type="text" name="numSecuConfirm" disabled style="cursor: not-allowed;" value="<?= $_SESSION['couvertureSociale'][0] ?>" id="" placeholder="Numero de sécurité sociale">
@@ -144,13 +153,13 @@
                 <option hidden value=0 > Chambre particulière ?</option>
 
                 <optgroup label="Avec équipements">
-                    <option value=1>Chambre seul</option>
-                    <option value=2>Chambre partager</option>
+                    <option value=1>Chambre seul avec équipements</option>
+                    <option value=2>Chambre partager avec équipements</option>
                 </optgroup>
 
                 <optgroup label="Sans équipements">
-                    <option value=3>Chambre seul</option>
-                    <option value=4>Chambre partager</option>
+                    <option value=3>Chambre seul sans équipements</option>
+                    <option value=4>Chambre partager sans équipements</option>
                 </optgroup>
             </select>
 

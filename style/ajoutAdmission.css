@@ -15,15 +15,17 @@ body {
     height: 100vh;
     width: 100%;
     background-color: #ECF1F5;
+    display: flex;
+    flex-direction: column;
 }
 
 main {
     margin: auto;
-    width: 50%;
+    width: 100%;
     align-items: center;
     display: flex;
     flex-direction: column;
-    margin-top: 50px;
+    height: 100vh;
 }
 
 main h2 {
@@ -44,10 +46,11 @@ main form .erreur {
 }
 
 main form {
+    width: 50%;
+    margin: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    width: 80%;
 }
 
 main form input {
@@ -119,6 +122,8 @@ main form input[type='file'] {
     outline: none;
     font-weight: 400;
     font-size: 18px;
+    width: max-content;
+    cursor: pointer;
 }
 
 main form input[name='next'],

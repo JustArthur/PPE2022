@@ -1,10 +1,8 @@
 <?php
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
     include_once('include.php');
 
     if(isset($_SESSION['utilisateur'][5])) {
-        header('Location: admin/panel');
+        header('Location: admin/panel.php');
         exit;
     }
 
@@ -19,57 +17,71 @@
             $password = htmlspecialchars(trim($password));
     
     
+            //-- Si le captcha et la réponse du user ne sont pas vide ----------------
             if(isset($_SESSION['captcha']) && !empty($_POST['reponse'])) {
+
+                //-- Si les deux sont égaux ----------------
                 if($_SESSION['captcha'] == $reponse) {
+
+                    //-- Si le user et le password est rempli ----------------
                     if(!empty($identifiant) && !empty($password)) {
                     
-                        $requser = $DB->prepare('SELECT * FROM personnel WHERE login = ? AND password = ?');
-                        $requser->execute(array($identifiant, $password));
-                        $userexist = $requser->rowCount();
+                        $selectPassword = $DB->prepare('SELECT password FROM personnel WHERE login = ?');
+                        $selectPassword->execute(array($identifiant));
+                        $selectPassword = $selectPassword->fetch();
             
-                        if ($userexist == 1 ) {
-                        
-                            $userinfo = $requser->fetch();
-                            switch($userinfo['role']) {
-                                case 1:
-                                    $role = 'Secretaire';
-                                    break;
-
-                                case 2:
-                                    $role = 'Administrateur';
-                                    break;
-
-                                case 3:
-                                    $role = 'Medecin';
-                                    break;
-                            }
+                        if(isset($selectPassword['password'])) {
                             
-                            $_SESSION['utilisateur'] = array(
-                                $userinfo['nom'], //0
-                                $userinfo['prenom'], //1
-                                $userinfo['service'], //2
-                                $userinfo['role'], //3
-                                $role, //4
-                                $userinfo['id'] //5
-                            );
+                            //-- Si le password est mauvais ----------------
+                            if(!password_verify($password, $selectPassword['password'])) {
+                                $erreur = 'Mauvais mot de passe.';
 
-                            $textLog = "Connexion d'un utilisateur";
-                            $dateLog = date('Y-m-d H:i');
-                        
-                            $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
-                            $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
-            
-                            header("Location: admin/panel");
-                            exit();
+                            } else {
+                                $userinfo = $DB->prepare('SELECT * from personnel where login = ?');
+                                $userinfo->execute([$identifiant]);
+                                $userinfo = $userinfo->fetch();
+
+                                switch($userinfo['role']) {
+                                    case 1:
+                                        $role = 'Secretaire';
+                                        break;
+    
+                                    case 2:
+                                        $role = 'Administrateur';
+                                        break;
+    
+                                    case 3:
+                                        $role = 'Medecin';
+                                        break;
+                                }
+                                
+                                $_SESSION['utilisateur'] = array(
+                                    $userinfo['nom'], //0
+                                    $userinfo['prenom'], //1
+                                    $userinfo['service'], //2
+                                    $userinfo['role'], //3
+                                    $role, //4
+                                    $userinfo['id'] //5
+                                );
+    
+                                $textLog = "Connexion d'un utilisateur";
+                                $dateLog = date('Y-m-d H:i');
+                            
+                                $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+                                $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
+                
+                                header("Location: admin/panel.php");
+                                exit();
+                            }
             
                         } else {
-                            $erreur = "Mauvais identifiant ou mot de passe.";
+                            $erreur = "Aucun utilisateur avec cet identifiant.";
                         }
                     } else {
                         $erreur = "Les champs identifiant et mot de passe sont vides.";
                     }
                 } else {
-                    $erreur = 'La réponse au captcha incorrect.';
+                    $erreur = 'La réponse au captcha est incorrect.';
                 }
             } else {
                 $erreur = "Certains champs sont vides.";

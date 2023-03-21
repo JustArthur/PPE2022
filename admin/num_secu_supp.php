@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) && $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 

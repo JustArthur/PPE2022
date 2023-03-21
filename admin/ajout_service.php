@@ -1,9 +1,10 @@
 <?php
     include_once('../include.php');
-     if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 2) {
+
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 2) {
         header('Location: panel');
-    exit;
-}
+        exit;
+    }
 ?>
 
 <html>

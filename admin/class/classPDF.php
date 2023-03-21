@@ -49,7 +49,7 @@ require('../../include.php');
             $recupPreaFetch = $recupPrea->fetchAll();
             $recupPreaCount = $recupPrea->rowCount();
 
-            $this->Cell(100, 10, mb_convert_encoding('Pré-admission disponible dans semaine du ' . $_POST['dateSemaine'], 'windows-1252', 'UTF-8'), 0, 1, '', 0);
+            $this->Cell(100, 10, mb_convert_encoding('Pré-admission disponible dans la semaine du ' . $_POST['dateSemaine'], 'windows-1252', 'UTF-8'), 0, 1, '', 0);
 
             
                 if($recupPreaCount != 0) {
@@ -85,5 +85,6 @@ require('../../include.php');
     $pdf->SetTextColor(0);
 
     $pdf->AliasNbPages();
-    $pdf->Output('I', 'test.pdf');
+    $nomPdf = mb_convert_encoding('Préadmission de la semaine du ' . $_POST['dateSemaine'].'.pdf', 'windows-1252', 'UTF-8');
+    $pdf->Output('I', $nomPdf);
 ?>

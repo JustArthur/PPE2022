@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -86,7 +86,7 @@
                 $_SESSION['modif_admission'][5] //5
             );
 
-            header('Location: couverture_modif');
+            header('Location: couverture_modif.php');
             exit;
         }
     }

@@ -2,8 +2,15 @@
     include_once('../include.php');
 
     //-- Empêche la connexion si un utilisateur n'est pas connecté ----------------
-    if(!isset($_SESSION['utilisateur'][5])) {
-        header('Location: ../index');
+    if(empty($_SESSION['utilisateur'][5])) {
+
+        $textLog = "Tentative de connexion forcé par le lien URL";
+        $dateLog = date('Y-m-d H:i');
+                            
+        $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+        $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
+                                
+        header('Location: src/deconnexion.php');
         exit;
     }
 
@@ -52,7 +59,7 @@
     $jourFinSemaine = ($jourPremierJanvier == 1) ? date('Y-m-d', $timeStampDate) : date('Y-m-d',strtotime(' sunday', $timeStampDate));
 
     //-- Récupères les pré-admissions prévu pour les 5 semaines à venir ----------------
-    $dernierePrea = $DB->prepare("SELECT * FROM preadmission p INNER JOIN operations o ON p.idOperation  = o.id WHERE o.dateOperation > ? AND o.dateOperation < ? AND p.status != 'Annulé' AND p.status != 'Terminé' AND p.idMedecin = ?");
+    $dernierePrea = $DB->prepare("SELECT * FROM preadmission p INNER JOIN operations o ON p.idOperation  = o.id WHERE o.dateOperation >= ? AND o.dateOperation <= ? AND p.status != 'Annulé' AND p.status != 'Terminé' AND p.idMedecin = ?");
     $dernierePrea->execute([$jourDebutSemaine, $date5sem, $_SESSION['utilisateur'][5]]);
     $dernierePreaFetch = $dernierePrea->fetchAll();
     $dernierePreaCount = $dernierePrea->rowcount();
@@ -90,6 +97,7 @@
             require_once('src/information.php');
         } ?>
 
+        <?php if($_SESSION['utilisateur'][3] == 3) {?>
         <div class="profil">
             <div class="infos">
                 <div class="nom"><?= $_SESSION['utilisateur'][1] ?> <span class="color"><?= $_SESSION['utilisateur'][0] ?></span></div>
@@ -97,7 +105,7 @@
             </div>
 
             <div class="last-prea">
-                <h3>Vos pré-admissions des 5 prochaines semaines</h3>
+                <h3>Vos pré-admissions des 5 prochaines semaines (de la plus récente à la plus vieille) </h3>
 
                 <ul class="list-prea-last">
                     <?php 
@@ -111,24 +119,59 @@
                                 $chercheMedecin = $DB->prepare("SELECT * FROM personnel WHERE id = ?");
                                 $chercheMedecin->execute([$preadmission['idMedecin']]);
                                 $chercheMedecin = $chercheMedecin->fetch();
+
+                                $select_prea = $DB->prepare('SELECT * from preadmission INNER JOIN operations on preadmission.idOperation = operations.id INNER JOIN patient on preadmission.idPatient = patient.numSecu where preadmission.id = ? order by operations.dateOperation and preadmission.status = "En cours";');
+                                $select_prea->execute([$preadmission['id']]);
+                                $select_prea = $select_prea->fetch();
                             
                             ?>
                                 <li class="list-item">
-                                    <div class="infos-prea">
-                                        <p><?= $preadmission['idPatient'] ?></p>
-                                        <p>Dr <?= $chercheMedecin['nom'] . ' ' . $chercheMedecin['prenom'] ?></p>
-                                        <p><?= $preadmission['dateOperation'] ?></p>
-                                        <p><?= $preadmission['heureOperation'] ?></p>
+                                    <div>
+                                        <label>Nom et prénom du patient : </label>
+                                        <?= $select_prea['nomNaissance'] . ' ' . $select_prea['prenom'] ?>
                                     </div>
 
-                                    <div class="btns">
-                                        <a href="preadmissionMedecin?id=<?= $preadmission['id']?>">Voir pré-admission</a>
+                                    <div>
+                                        <label>Date d'anniversaire : </label>
+                                        <?= $select_prea['dateNaissance'] ?>
                                     </div>
+
+                                    <div>
+                                        <label>Date de l'opération : </label>
+                                        <?= $preadmission['dateOperation'] ?>
+                                    </div>
+
+                                    <div>
+                                        <label>Heure de l'opération : </label>
+                                        <?= $preadmission['heureOperation'] ?>
+                                    </div>
+
+                                    <div>
+                                        <label>Chambre : </label>
+                                        N°<?= $preadmission['idChambre'] ?>
+                                    </div>
+
+                                    <?php if($preadmission['status'] == 'En cours') {?>
+                                    <div class="btns">
+                                        <a style="background: red;" href="changeStatut?id=<?= $preadmission['id']?>">Clôturer la pré-admission</a>
+                                    </div>
+
+                                    <?php } else if($preadmission['dateOperation'] == $dateAujourdhui) { ?>
+                                    <div class="btns">
+                                        <a style="background: #00A3FE;" href="changeStatut?id=<?= $preadmission['id']?>">Prendre en charge</a>
+                                    </div>
+
+                                    <?php } else { ?>
+                                    <div class="btns">
+                                        <a style="background: black; cursor: not-allowed;" href="">Pas encore disponible</a>
+                                    </div>
+                                    <?php } ?>
                                 </li>
                     <?php } } ?>
                 </ul>
             </div>
         </div>
+        <?php } ?>
     </main>
 
     <script src="js/expireConnexion.js"></script>

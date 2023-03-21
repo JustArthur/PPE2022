@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -70,7 +70,7 @@
                             break;
                         
                         case 'Pas réalisé';
-                            header('Location: modif_admission');
+                            header('Location: modif_admission.php');
                             exit;
 
                             break;
@@ -79,7 +79,7 @@
                 } elseif($chercherPreAdmissionCount > 1) {
                     $_SESSION['patientPrea'] = $chercherPreAdmission['idPatient'];
 
-                    header('Location: voir_preadmission_modif');
+                    header('Location: voir_preadmission_modif.php');
                     exit;
 
                 } else {

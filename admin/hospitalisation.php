@@ -1,24 +1,20 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
     $_SESSION['hospitalisation'] = array();
 
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true) {
-        header('Location: num_secu_creer');
+        header('Location: num_secu_creer.php');
         exit;
     }
 
     $dateMin = date('Y-m-d', time());
     $erreur = '';
-
-    $docteur = $DB->prepare("SELECT * FROM personnel WHERE role = 3");
-    $docteur->execute();
-    $docteur = $docteur->fetchAll();
 
     if(!empty($_POST)) {
         extract($_POST);
@@ -41,13 +37,17 @@
                     false //4
                 );
 
-                header('Location: couverture');
+                header('Location: couverture.php');
                 exit;
             } else {
                 $erreur = "Certain champs sont invalides.";
             }
         }
     }
+
+    $docteur = $DB->prepare("SELECT * FROM personnel WHERE role = 3");
+    $docteur->execute();
+    $docteur = $docteur->fetchAll();
 ?>
 
 <!DOCTYPE html>
