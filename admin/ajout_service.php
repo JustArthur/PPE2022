@@ -6,7 +6,6 @@
         exit;
     }
     
-    //test
 ?>
 
 <html>
