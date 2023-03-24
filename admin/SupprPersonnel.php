@@ -8,5 +8,5 @@
         $id = htmlentities($_GET['id']);
         $sql= $DB->exec("DELETE FROM personnel where id = " . $id . ";");
     }
-    header("Location : ajout_service.php");
+    header("Location: ajout_service.php");
 ?>
