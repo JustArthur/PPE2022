@@ -1,11 +1,11 @@
 <?php
     include_once('../include.php');
-
+    // Si la $_SESSION['utilisateur'][5] est vide (grâce au empty devant) OU que la $_SESSION['utilisateur'][5] est différente du 2 alors il me renvoi au panel ou à la page de connexion
     if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 2) {
         header('Location: panel');
-        exit;
-    }
-    
+    exit;
+}
+
 ?>
 
 <html>
@@ -39,17 +39,21 @@
     </body>
     <?php
         if (isset($_POST['ajouter'])) {
+
             $login = htmlspecialchars($_POST['login']);
             $password = htmlspecialchars($_POST['password']);
+
+            $crypt_password = password_hash($password, PASSWORD_DEFAULT); // password default car version > 7.2 donc on peut pas utiliser argon2id
+
             $nom = htmlspecialchars($_POST['nom']);
             $prenom  = htmlspecialchars($_POST['prenom']);
             $service = htmlspecialchars($_POST['service']);
             $role = htmlspecialchars($_POST['role']);
             $sql =("INSERT INTO personnel (login, password,nom,prenom,service,role) VALUE (?,?,?,?,?,?)");
             $reponse = $DB->prepare($sql);
-            $reponse = $reponse->execute(array($login,$password,$nom, $prenom,$service,$role));
+            $reponse = $reponse->execute(array($login, $crypt_password, $nom, $prenom, $service, $role));
             
-        }   
+        }
     ?> 
     <?php
         $reqpersonnels= $DB->prepare('SELECT id,nom,prenom,service,role FROM personnel');
