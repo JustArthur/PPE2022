@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="../style/navBar.css">
 </head>
 <body>
+<?php
+        require_once('src/navbar.php');
+    ?>
 <div>
     <div>
     <canvas id="myChartPersonelle"></canvas>
@@ -198,5 +201,6 @@
       }
     });
     </script>
+    <script src="js/expireConnexion.js"></script>
   </body> 
 </html>
