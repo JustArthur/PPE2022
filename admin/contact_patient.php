@@ -1,13 +1,13 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true) {
-        header('Location: num_secu_creer');
+        header('Location: num_secu_creer.php');
         exit;
     }
 
@@ -76,7 +76,7 @@
                 false //4
             );
 
-            header('Location: hospitalisation');
+            header('Location: hospitalisation.php');
             exit;
         }
     }
@@ -92,7 +92,9 @@
     <link rel="stylesheet" href="../style/ajoutAdmission.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Document</title>
+    <title>Contact du patient</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php
@@ -129,5 +131,7 @@
             <input type="submit" required name="next" value="Continuer">
         </form>
     </main>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

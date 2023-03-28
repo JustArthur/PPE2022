@@ -1,30 +1,19 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
     if($_SESSION['creer_admission'][0] != true) {
-        header('Location: num_secu_creer');
+        header('Location: num_secu_creer.php');
         exit;
     }
 
     $dateMax = date('Y-m-d', time());
 
     $erreur = '';
-
-    if($_SESSION['patient'][1] == "Homme") {
-        $homme = 'selected';
-        $femme = '';
-    } elseif($_SESSION['patient'][1] == "Femme") {
-        $homme = '';
-        $femme = 'selected';
-    } else {
-        $homme = '';
-        $femme = '';
-    }
     
     if(!empty($_POST)) {
         extract($_POST);
@@ -64,7 +53,7 @@
                     $codePostal, //7
                     $ville, //8
                     $email, //9
-                    $telephone, //10
+                    '0'.$telephone, //10
                     $bool, //11
                     $mineur //12
                 );
@@ -77,12 +66,29 @@
                     false //4 
                 );
     
-                header('Location: contact_patient');
+                header('Location: contact_patient.php');
                 exit;
             } else {
                 $erreur = 'Veillez choisir le sexe du patient.';
             }            
         }
+    }
+
+    switch($_SESSION['patient'][1]) {
+        case 'Homme':
+            $homme = 'selected';
+            $femme = '';
+        break;
+
+        case 'Femme':
+            $homme = '';
+            $femme = 'selected';
+        break;
+
+        default:
+            $homme = '';
+            $femme = '';
+        break;
     }
 ?>
 
@@ -96,7 +102,9 @@
     <link rel="stylesheet" href="../style/ajoutAdmission.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Document</title>
+    <title>Information sur le patient</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php
@@ -111,7 +119,7 @@
 
             <?php if($erreur != '') { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
 
-            <input required disabled style="cursor: not-allowed;" type="text" name="" value="<?= $_SESSION['patient'][0] ?>" placeholder="Numéro de sécurité sociale">
+            <input required disabled style="cursor: not-allowed; border-radius: 10px 10px 0 0;" type="text" name="" value="<?= $_SESSION['patient'][0] ?>" placeholder="Numéro de sécurité sociale">
 
             <select required name="civilite" id="">
                 <option hidden value="none">Sexe du patient</option>
@@ -141,6 +149,7 @@
         </form>
     </main>
     
+    <script src="js/expireConnexion.js"></script>
     
 </body>
 </html>

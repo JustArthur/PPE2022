@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="../style/voirAdmission.css">
 
     <title>Toutes les pré-admissions de <?= $_SESSION['patientPrea'] ?></title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
 </head>
 <body>
     <?php require_once('src/navbar.php'); ?>
@@ -87,5 +88,6 @@
         </ul>
     </main>
     
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

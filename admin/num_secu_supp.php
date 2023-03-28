@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -102,13 +102,15 @@
     <link rel="stylesheet" href="../style/numSecu.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Document</title>
+    <title>Supprimer une pré-admission</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php require_once('src/navbar.php'); ?>
 
     <form method="post">
-        <h1>Supprimer une préadmission</h1>
+        <h1>Supprimer une pré-admission</h1>
 
         <?php if($erreur != '') { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
 
@@ -116,5 +118,7 @@
 
         <input type="submit" name="chercheNumSecu" value="Rechercher le patient">
     </form>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

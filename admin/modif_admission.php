@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -86,7 +86,7 @@
                 $_SESSION['modif_admission'][5] //5
             );
 
-            header('Location: couverture_modif');
+            header('Location: couverture_modif.php');
             exit;
         }
     }
@@ -101,7 +101,10 @@
     
     <link rel="stylesheet" href="../style/ajoutAdmission.css">
     <link rel="stylesheet" href="../style/navBar.css">
-    <title>Document</title>
+
+    <title>Modifier la pré-admission</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php require_once('src/navbar.php'); ?>
@@ -133,5 +136,7 @@
             <input type="submit" name="next" value="Modifier les informations">
         </form>
     </main>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

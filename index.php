@@ -1,10 +1,8 @@
 <?php
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
     include_once('include.php');
 
     if(isset($_SESSION['utilisateur'][5])) {
-        header('Location: admin/panel');
+        header('Location: admin/panel.php');
         exit;
     }
 
@@ -19,57 +17,71 @@
             $password = htmlspecialchars(trim($password));
     
     
+            //-- Si le captcha et la réponse du user ne sont pas vide ----------------
             if(isset($_SESSION['captcha']) && !empty($_POST['reponse'])) {
+
+                //-- Si les deux sont égaux ----------------
                 if($_SESSION['captcha'] == $reponse) {
+
+                    //-- Si le user et le password est rempli ----------------
                     if(!empty($identifiant) && !empty($password)) {
                     
-                        $requser = $DB->prepare('SELECT * FROM personnel WHERE login = ? AND password = ?');
-                        $requser->execute(array($identifiant, $password));
-                        $userexist = $requser->rowCount();
+                        $selectPassword = $DB->prepare('SELECT password FROM personnel WHERE login = ?');
+                        $selectPassword->execute(array($identifiant));
+                        $selectPassword = $selectPassword->fetch();
             
-                        if ($userexist == 1 ) {
-                        
-                            $userinfo = $requser->fetch();
-                            switch($userinfo['role']) {
-                                case 1:
-                                    $role = 'Secretaire';
-                                    break;
-
-                                case 2:
-                                    $role = 'Administrateur';
-                                    break;
-
-                                case 3:
-                                    $role = 'Medecin';
-                                    break;
-                            }
+                        if(isset($selectPassword['password'])) {
                             
-                            $_SESSION['utilisateur'] = array(
-                                $userinfo['nom'], //0
-                                $userinfo['prenom'], //1
-                                $userinfo['service'], //2
-                                $userinfo['role'], //3
-                                $role, //4
-                                $userinfo['id'] //5
-                            );
+                            //-- Si le password est mauvais ----------------
+                            if(!password_verify($password, $selectPassword['password'])) {
+                                $erreur = 'Mauvais mot de passe.';
 
-                            $textLog = "Connexion d'un utilisateur";
-                            $dateLog = date('Y-m-d H:i');
-                        
-                            $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
-                            $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
-            
-                            header("Location: admin/panel");
-                            exit();
+                            } else {
+                                $userinfo = $DB->prepare('SELECT * from personnel where login = ?');
+                                $userinfo->execute([$identifiant]);
+                                $userinfo = $userinfo->fetch();
+
+                                switch($userinfo['role']) {
+                                    case 1:
+                                        $role = 'Secretaire';
+                                        break;
+    
+                                    case 2:
+                                        $role = 'Administrateur';
+                                        break;
+    
+                                    case 3:
+                                        $role = 'Medecin';
+                                        break;
+                                }
+                                
+                                $_SESSION['utilisateur'] = array(
+                                    $userinfo['nom'], //0
+                                    $userinfo['prenom'], //1
+                                    $userinfo['service'], //2
+                                    $userinfo['role'], //3
+                                    $role, //4
+                                    $userinfo['id'] //5
+                                );
+    
+                                $textLog = "Connexion d'un utilisateur";
+                                $dateLog = date('Y-m-d H:i');
+                            
+                                $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+                                $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
+                
+                                header("Location: admin/panel.php");
+                                exit();
+                            }
             
                         } else {
-                            $erreur = "Mauvais identifiant ou mot de passe.";
+                            $erreur = "Aucun utilisateur avec cet identifiant.";
                         }
                     } else {
                         $erreur = "Les champs identifiant et mot de passe sont vides.";
                     }
                 } else {
-                    $erreur = 'La réponse au captcha incorrect.';
+                    $erreur = 'La réponse au captcha est incorrect.';
                 }
             } else {
                 $erreur = "Certains champs sont vides.";
@@ -89,7 +101,10 @@
 
     <link rel="stylesheet" href="style/style.css">
 
-    <title>Connexion - Clinique LPF</title>
+    <title>Connexion | Clinique LPF</title>
+
+    <link rel="icon" href="img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <main>
@@ -99,14 +114,22 @@
             <div class="formulaire">
                 <h3>Connexion à votre compte</h3>
 
-                <?php if(isset($erreur)) { ?><div class="erreur"><?= $erreur ?></div><?php } ?>
+                    <script>
+                        if(localStorage.getItem('errorSession') === '' || localStorage.getItem('errorSession') === null) {
+                            
+                        } else {
+                            document.write(`<div class="erreur">`, localStorage.getItem('errorSession'), `</div>`);
+                        }
+                    </script>
+                <?php if(isset($_POST['localStorageData'])) { ?><div class="erreur"><?= $_POST['localStorageData']; ?></div><?php }?>
+                <?php if(isset($erreur)) { ?><div class="erreur active"><?= $erreur ?></div><?php } ?>
 
-                <form method="POST">
-                    <input type="text" name="identifiant" id="" placeholder="Votre identifiant">
-                    <input type="password" name="password" id="" placeholder="Votre mot de passe">
+                <form method="POST" id="formulaire">
+                    <input type="text" id="identifiant" name="identifiant" placeholder="Votre identifiant">
+                    <input type="password" id="password" name="password" placeholder="Votre mot de passe">
 
                     <div class="div_captcha">
-                        <input type="text" maxlength="4" minlength="1" name="reponse" id="" placeholder="Réponse au captcha">
+                        <input type="text" maxlength="4" minlength="1" name="reponse" id="captcha" pattern="[0-9]*" placeholder="Réponse au captcha">
                         <div class="chiffre">
                             <?= $_SESSION['captcha'] ?>
                         </div>
@@ -119,5 +142,28 @@
 
         <div class="droite"></div>
     </main>
+
+    <script>
+        //-- Pour la compatibilité KeyPass et éviter le enter du submit si l'utilisateur n'as pas rempli les 3 champs ----------------
+
+        const form = document.getElementById('formulaire');
+
+        const inputId = document.getElementById('identifiant'),
+        inputPass = document.getElementById('password'),
+        inputCapt = document.getElementById('captcha');
+
+
+        form.addEventListener('keydown', function(event) {
+            if(inputId.value.length < 2 && inputPass.value.length < 2) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                }
+            } else if(inputCapt.value.length != 4) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,13 +1,13 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
     
     if($_SESSION['creer_admission'][0] != true && $_SESSION['creer_admission'][1] != true && $_SESSION['creer_admission'][2] != true && $_SESSION['creer_admission'][3] != true && $_SESSION['creer_admission'][4] != true) {
-        header('Location: num_secu_creer');
+        header('Location: num_secu_creer.php');
         exit;
     }
 
@@ -46,9 +46,11 @@
                     }
                 } else {
                     $valid = false;
+                    $erreur = 'Mauvais format de fichier';
                 }
             } else {
                 $valid = false;
+                $erreur = 'Le livret de famille n\'est pas renseigné';
             }
         } else {
             $livretFamille = '';
@@ -85,31 +87,34 @@
                 if(is_readable($chemin_CNI) && is_readable($chemin_CarteVitale) && is_readable($chemin_CarteMutuelle)) {
                     $valid = true;
                 } else{
-                    $erreur = 'Erreur images 3';
+                    $erreur = 'Chemin introuvable, contacter votre DSI';
                     $valid = false;
                 }
             } else { 
-                $erreur = 'Erreur images 2';
+                $erreur = 'Un ou plusieurs fichier n\'ont pas la bonne extension';
                 $valid = false;
             }
         } else {
-            $erreur ='Erreur images 1';
+            $erreur ='Un ou plusieurs fichiers n\'ont pas été rensigné';
             $valid = false;
         }
 
 
         if($valid) {
-            if(isset($_SESSION['patient'][11]) == false) { //Si le patient n'existe pas
+            //-- Si le patient n'existe pas ------------
+            if(isset($_SESSION['patient'][11]) == false) {
 
+                //-- Il créer un nouveau patient ------------
                 $insertPatient = $DB->prepare("INSERT INTO patient (numSecu, civilite, nomNaissance, nomEpouse, prenom, dateNaissance, adresse, codePostal, ville, email, telephone, cni, carteVitale, carteMutuelle, livretFamille) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
                 $insertPatient->execute([$_SESSION['patient'][0],$_SESSION['patient'][1],$_SESSION['patient'][2],$_SESSION['patient'][3],$_SESSION['patient'][4],$_SESSION['patient'][5],$_SESSION['patient'][6],$_SESSION['patient'][7],$_SESSION['patient'][8],$_SESSION['patient'][9],$_SESSION['patient'][10], $cni, $carteVitale, $carteMutuelle, $livretFamille]);
 
-
+                //-- Il cherche les personne à prévenir et à contacter par rapport au num patient ------------
                 $contactPatient = $DB->prepare("SELECT id, prevenir, confiance FROM contact WHERE idPatient = ?");
                 $contactPatient->execute([$_SESSION['patient'][0]]);
                 $contactPatientRow = $contactPatient->rowcount();
                 $contactPatientFetch = $contactPatient->fetch();
 
+                //-- Si il en à 2 il update par rapport a la personne voulu ------------
                 if($contactPatientRow == 2) {
                     $updateConfiance = $DB->prepare("UPDATE contact SET nom = ?, prenom = ?, adresse = ?, telephone = ? = ? WHERE idPatient = ? AND telephone = ? AND confiance = 1");
                     $updateConfiance->execute([$_SESSION['personneConfiance'][0], $_SESSION['personneConfiance'][1], $_SESSION['personneConfiance'][3], $_SESSION['personneConfiance'][2], $_SESSION['patient'][0], $_SESSION['personneConfiance'][2]]);
@@ -117,11 +122,13 @@
                     $updateConfiance = $DB->prepare("UPDATE contact SET nom = ?, prenom = ?, adresse = ?, telephone = ? = ? WHERE idPatient = ? AND telephone = ? AND prevenir = 1");
                     $updateConfiance->execute([$_SESSION['personnePrevenir'][0], $_SESSION['personnePrevenir'][1], $_SESSION['personnePrevenir'][3], $_SESSION['personnePrevenir'][2], $_SESSION['patient'][0], $_SESSION['personnePrevenir'][2]]);
 
+                //-- Sinon il update pour 1 seul vu que c'est le même ------------
                 } elseif(isset($contactPatientFetch['prevenir']) == 1 && isset($contactPatientFetch['confiance']) == 1) {
                     $updateConfiance = $DB->prepare("UPDATE contact SET nom = ?, prenom = ?, adresse = ?, telephone = ? = ? WHERE idPatient = ? AND telephone = ? AND confiance = 1 AND prevenir = 1");
                     $updateConfiance->execute([$_SESSION['personneConfiance'][0], $_SESSION['personneConfiance'][1], $_SESSION['personneConfiance'][3], $_SESSION['personneConfiance'][2], $_SESSION['patient'][0], $_SESSION['personneConfiance'][2]]);
                 }
 
+                //-- Si il n'y en a pas il me les inserts ------------
                 if($contactPatientRow == 0) {
                     if(in_array($_SESSION['personneConfiance'], $_SESSION['personnePrevenir'])) {
                         $insertConfiance_et_prevenir = $DB->prepare("INSERT INTO contact (nom, prenom, adresse, telephone, idPatient, prevenir, confiance) VALUES(?, ?, ?, ?, ?, 1, 1);");
@@ -135,6 +142,8 @@
                         $insertPrevenir->execute([$_SESSION['personnePrevenir'][0], $_SESSION['personnePrevenir'][1], $_SESSION['personnePrevenir'][3], $_SESSION['personnePrevenir'][2], $_SESSION['patient'][0]]);
                     }
                 }
+            
+            //-- Sinon il update le patient ------------
             } else {
                 $updatePatient = $DB->prepare("UPDATE patient SET civilite = ?, nomNaissance = ?, nomEpouse = ?, prenom = ?, dateNaissance = ?, adresse = ?, codePostal = ?, ville = ?, email = ?, telephone = ?, cni = ?, carteVitale = ?, carteMutuelle = ?, livretFamille = ? WHERE numSecu = ?;");
                 $updatePatient->execute([$_SESSION['patient'][1],$_SESSION['patient'][2],$_SESSION['patient'][3],$_SESSION['patient'][4],$_SESSION['patient'][5],$_SESSION['patient'][6],$_SESSION['patient'][7],$_SESSION['patient'][8],$_SESSION['patient'][9],$_SESSION['patient'][10], $cni, $carteVitale, $carteMutuelle, $livretFamille, $_SESSION['patient'][0]]);
@@ -143,6 +152,7 @@
                 $contactPatient->execute([$_SESSION['patient'][0]]);
                 $contactPatientRow = $contactPatient->rowcount();
 
+                //-- Il update les informations des personne de contact et prévenir ------------
                 if($contactPatientRow == 1) {
                     $updateConfiance = $DB->prepare("UPDATE contact SET nom = ?, prenom = ?, adresse = ?, telephone = ?, idPatient = ? WHERE idPatient = ? AND telephone = ? AND confiance = 1 AND prevenir = 1");
                     $updateConfiance->execute([$_SESSION['personneConfiance'][0], $_SESSION['personneConfiance'][1], $_SESSION['personneConfiance'][3], $_SESSION['personneConfiance'][2], $_SESSION['patient'][0], $_SESSION['patient'][0], $_SESSION['personneConfiance'][2]]);
@@ -166,30 +176,38 @@
                     break;
             }
             
+            //-- ajoute l'opération ------------
             $insertOperation = $DB->prepare("INSERT INTO operations (idPatient, nomOperation, dateOperation, heureOperation, idMedecin) VALUES(?, ?, ?, ?, ?);");
             $insertOperation->execute([$_SESSION['patient'][0], $nomOperation, $_SESSION['hospitalisation'][1], $_SESSION['hospitalisation'][2], $_SESSION['hospitalisation'][3]]);
 
+            //-- Si la couverture sociale du patient n'est pas disponible il l'as créer ------------
             if($_SESSION['couvertureSociale'][7] == false) {
                 $insertcouverture = $DB->prepare("INSERT INTO couverture (numSecu, organisme, assure, ald, nomMutuelle, numAdherent) VALUES(?, ?, ?, ?, ?, ?);");
                 $insertcouverture->execute([$_SESSION['patient'][0], $_SESSION['couvertureSociale'][1], $_SESSION['couvertureSociale'][2], $_SESSION['couvertureSociale'][3],$_SESSION['couvertureSociale'][4],$_SESSION['couvertureSociale'][5]]);
+            
+            //-- Sinon il update ------------
             } else {
                 $updateCouverture = $DB->prepare("UPDATE couverture SET organisme = ?, assure = ?, ald = ?, nomMutuelle = ?, numAdherent = ? WHERE numSecu = ?;");
                 $updateCouverture->execute([$_SESSION['couvertureSociale'][1], $_SESSION['couvertureSociale'][2], $_SESSION['couvertureSociale'][3],$_SESSION['couvertureSociale'][4],$_SESSION['couvertureSociale'][5], $_SESSION['patient'][0]]);
             }
 
+            //-- Cherche l'id de l'opération rajouté ------------
             $selectOperationId = $DB->prepare("SELECT id FROM operations WHERE idPatient = ? AND dateOperation = ? AND heureOperation = ?");
             $selectOperationId->execute([$_SESSION['patient'][0], $_SESSION['hospitalisation'][1], $_SESSION['hospitalisation'][2]]);
             $selectOperationId = $selectOperationId->fetch();
 
+            //-- Créer la pré-admission ------------
             $insertPreadmission = $DB->prepare("INSERT INTO preadmission (idPatient, idMedecin, idOperation, idChambre, dateAdmission, faitPar) VALUES(?, ?, ?, ?, ?, ?);");
             $insertPreadmission->execute([$_SESSION['patient'][0], $_SESSION['hospitalisation'][3], $selectOperationId['id'], $_SESSION['couvertureSociale'][6], $dateAujourdhui, $_SESSION['utilisateur'][5]]);
 
-            $textLog = "Création d'une nouvelle préadmission";
+            //-- Rajoute la ligne de log ------------
+            $textLog = "Création d'une nouvelle préadmission pour " . $_SESSION['patient'][0];
             $dateLog = date('Y-m-d H:i');
         
             $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
             $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
 
+            //-- Rénistialise la session de la création d'une pré-admission ------------
             $_SESSION['creer_admission'] = array(
                 true, //0
                 false, //1
@@ -198,7 +216,7 @@
                 false //4
             );
             
-            header('Location: num_secu_creer');
+            header('Location: num_secu_creer.php');
             exit;
         }
     }
@@ -214,7 +232,9 @@
     <link rel="stylesheet" href="../style/ajoutAdmission.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Document</title>
+    <title>Documents du patient</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php
@@ -243,7 +263,7 @@
 
             <?php if($_SESSION['patient'][12]) { ?>
             <label for="livretFamille">
-                Livret de famille (si le patient est mineur)
+                Livret de famille
                 <input type="file" name="livretFamille" id="">
             </label>
             <?php } ?>
@@ -251,5 +271,7 @@
             <input type="submit" name="finish" value="Ajouter la pré-admission pour <?= $_SESSION['patient'][4] . ' ' . $_SESSION['patient'][2] ?>">
         </form>
     </main>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -69,7 +69,7 @@
                         $chercheNumSecu['codePostal'], //7
                         $chercheNumSecu['ville'], //8
                         $chercheNumSecu['email'], //9
-                        $chercheNumSecu['telephone'], //10
+                        '0'.$chercheNumSecu['telephone'], //10
                         true, //11
                         true //12
                     );
@@ -82,7 +82,7 @@
                         false //4
                     );
 
-                    header('Location: ajout_admission');
+                    header('Location: ajout_admission.php');
                     exit;
 
                 } else {
@@ -96,7 +96,7 @@
                         false //4
                     );
 
-                    header('Location: ajout_admission');
+                    header('Location: ajout_admission.php');
                     exit;
                 }
             } else {
@@ -116,7 +116,8 @@
     <link rel="stylesheet" href="../style/numSecu.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
-    <title>Document</title>
+    <title>Créer une nouvelle pré-admission</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
 </head>
 <body>
     <?php
@@ -132,5 +133,7 @@
 
         <input type="submit" name="chercheNumSecu" value="Rechercher le patient">
     </form>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

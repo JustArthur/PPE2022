@@ -1,8 +1,8 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5]) AND $_SESSION['utilisateur'][3] != 1) {
-        header('Location: panel');
+    if(empty($_SESSION['utilisateur'][5]) || $_SESSION['utilisateur'][3] != 1) {
+        header('Location: panel.php');
         exit;
     }
 
@@ -71,7 +71,7 @@
         extract($_POST);
 
         if(isset($_POST['next'])) {
-            header('Location: couverture_supp');
+            header('Location: couverture_supp.php');
             exit;
 
         }
@@ -87,7 +87,10 @@
     
     <link rel="stylesheet" href="../style/ajoutAdmission.css">
     <link rel="stylesheet" href="../style/navBar.css">
-    <title>Document</title>
+
+    <title>Supprimer une pré-admission</title>
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
+
 </head>
 <body>
     <?php require_once('src/navbar.php'); ?>
@@ -119,5 +122,7 @@
             <input type="submit" name="next" value="Continuer pour supprimer">
         </form>
     </main>
+    
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>

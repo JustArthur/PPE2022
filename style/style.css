@@ -19,8 +19,8 @@ body {
 
 main {
     margin: auto;
-    height: 95%;
-    width: 97%;
+    height: 100%;
+    width: 100%;
     display: flex;
     gap: 20px;
 }
@@ -92,6 +92,24 @@ main .gauche .formulaire form input {
     outline: 0 solid #fe5900;
     font-weight: 400;
     font-size: 18px;
+}
+
+main .gauche .formulaire form input:invalid {
+    animation: shake 300ms;
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(8px);
+    }
+
+    50% {
+        transform: translateX(-8px);
+    }
+
+    75% {
+        transform: translateX(8px);
+    }
 }
 
 main .gauche .formulaire form input[name='identifiant'] {

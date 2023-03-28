@@ -1,65 +1,66 @@
 <?php
     include_once('../include.php');
 
-    if(!isset($_SESSION['utilisateur'][5])) {
-        header('Location: ../index');
+    //-- Empêche la connexion si un utilisateur n'est pas connecté ----------------
+    if(empty($_SESSION['utilisateur'][5])) {
+
+        $textLog = "Tentative de connexion forcé par le lien URL";
+        $dateLog = date('Y-m-d H:i');
+                            
+        $log = $DB->prepare("INSERT INTO log (idUser, nomLog, dateTimeLog) VALUES(?, ?, ?);");
+        $log->execute([$_SESSION['utilisateur'][5], $textLog, $dateLog]);
+                                
+        header('Location: src/deconnexion.php');
         exit;
     }
 
     $dateAujourdhui = date('Y-m-d');
 
-    $nbr_admission_today = $DB->prepare("SELECT * FROM operations WHERE dateOperation = ?");
-    $nbr_admission_today->execute([$dateAujourdhui]);
-    $nbr_admission_today = $nbr_admission_today->rowcount();
+    //-- Vide les SESSIONS pour une pré-admission ----------------
+    $_SESSION['patient'] = array();
+    $_SESSION['personneConfiance'] = array();
+    $_SESSION['personnePrevenir'] = array();
+    $_SESSION['hospitalisation'] = array();
+    $_SESSION['couvertureSociale'] = array();
 
-    $nbr_patient_today = $DB->prepare("SELECT * FROM preadmission WHERE dateAdmission = ?");
-    $nbr_patient_today->execute([$dateAujourdhui]);
-    $nbr_patient_today = $nbr_patient_today->rowcount();
+    //-- Pour empêcher l'ouverture des pages suivantes sans passer par les requises ----------------
+    $_SESSION['creer_admission'] = array(
+        false, //0
+        false, //1
+        false, //2
+        false, //3
+        false //4
+    );
 
-    $nbr_annule_today = $DB->prepare("SELECT * FROM preadmission WHERE dateAdmission = ? AND status = 'Annulé'");
-    $nbr_annule_today->execute([$dateAujourdhui]);
-    $nbr_annule_today = $nbr_annule_today->rowcount();
+    // -- Ajoute 5 semaines à la date d'aujourd'hui ----------------
+    $date5sem = new DateTime(); 
+    $date5sem->modify('+5 weeks');
+    $date5sem = $date5sem->format('Y-m-d');
 
-    $nbr_encours_today = $DB->prepare("SELECT * FROM preadmission WHERE dateAdmission = ? AND status = 'En cours'");
-    $nbr_encours_today->execute([$dateAujourdhui]);
-    $nbr_encours_today = $nbr_encours_today->rowcount();
 
-    $nbr_termine_today = $DB->prepare("SELECT * FROM preadmission WHERE dateAdmission = ? AND status = 'Terminé'");
-    $nbr_termine_today->execute([$dateAujourdhui]);
-    $nbr_termine_today = $nbr_termine_today->rowcount();
+    // -- Défini l'anné et le numéro de la semaine pour calculer les informations de la semaines ----------------
+    $anneeChoix = date('Y');
+    $semChoix = date('W');
 
-    if($nbr_admission_today == 0) {
-        $nbr_admission_today = 'Aucune';
-    } else {
-        $nbr_admission_today = $nbr_admission_today;
-    }
+    $timeStampPremierJanvier = strtotime($anneeChoix . '-01-01');
+    $jourPremierJanvier = date('w', $timeStampPremierJanvier);
+    
+    //-- Recherche du N° de semaine du 1er janvier -------------------
+    $numSemainePremierJanvier = date('W', $timeStampPremierJanvier);
+    
+    //-- Nombre à ajouter en fonction du numéro précédent ------------
+    $decallage = ($numSemainePremierJanvier == 1) ? $semChoix - 1 : $semChoix;
 
-    if($nbr_patient_today == 0) {
-        $nbr_patient_today = 'Aucun';
-    } else {
-        $nbr_patient_today = $nbr_patient_today;
-    }
+    //-- Timestamp du jour dans la semaine recherchée ----------------
+    $timeStampDate = strtotime('+' . $decallage . 'weeks', $timeStampPremierJanvier);
+    
+    //-- Recherche du lundi de la semaine en fonction de la ligne précédente ---------
+    $jourDebutSemaine = ($jourPremierJanvier == 1) ? date('Y-m-d', $timeStampDate) : date('Y-m-d', strtotime('last monday', $timeStampDate));
+    $jourFinSemaine = ($jourPremierJanvier == 1) ? date('Y-m-d', $timeStampDate) : date('Y-m-d',strtotime(' sunday', $timeStampDate));
 
-    if($nbr_annule_today == 0) {
-        $nbr_annule_today = 'Aucune';
-    } else {
-        $nbr_annule_today = $nbr_annule_today;
-    }
-
-    if($nbr_termine_today == 0) {
-        $nbr_termine_today = 'Aucune';
-    } else {
-        $nbr_termine_today = $nbr_termine_today;
-    }
-
-    if($nbr_encours_today == 0) {
-        $nbr_encours_today = 'Aucune';
-    } else {
-        $nbr_encours_today = $nbr_encours_today;
-    }
-
-    $dernierePrea = $DB->prepare("SELECT * FROM preadmission WHERE faitPar = ? AND dateAdmission = ? LIMIT 20");
-    $dernierePrea->execute([$_SESSION['utilisateur'][5], $dateAujourdhui]);
+    //-- Récupères les pré-admissions prévu pour les 5 semaines à venir ----------------
+    $dernierePrea = $DB->prepare("SELECT * FROM preadmission p INNER JOIN operations o ON p.idOperation  = o.id WHERE o.dateOperation >= ? AND o.dateOperation <= ? AND p.status != 'Annulé' AND p.status != 'Terminé' AND p.idMedecin = ?");
+    $dernierePrea->execute([$jourDebutSemaine, $date5sem, $_SESSION['utilisateur'][5]]);
     $dernierePreaFetch = $dernierePrea->fetchAll();
     $dernierePreaCount = $dernierePrea->rowcount();
 ?>
@@ -74,48 +75,29 @@
     <link rel="stylesheet" href="../style/panel.css">
     <link rel="stylesheet" href="../style/navBar.css">
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <title>Bienvenue, <?= $_SESSION['utilisateur'][0] . ' ' . $_SESSION['utilisateur'][1] ?></title>
+
+    <link rel="icon" href="../img/logo.png" type="image/icon type">
 </head>
 <body>
+    <script>
+        localStorage.removeItem('errorSession');
+    </script>
 
-    <?php
+    <?php 
+        //-- Appel le fichier navbar ----------------
         require_once('src/navbar.php');
     ?>
     
     <main>
-        <?php if($_SESSION['utilisateur'][3] == 1) {?>
-        <ul class="list-prea">
-            <a href="#" class="list-item">
-                <h3 class="titre">Pré-admissions</h3>
-                <p class="desc"><span class="color"><?= $nbr_admission_today ?></span> pré-admission au total prévu pour aujourd'hui.</p>
-            </a>
+        <?php if($_SESSION['utilisateur'][3] == 1) {
+            //-- Appel le fichier information ----------------
+            require_once('src/information.php');
+        } ?>
 
-            <a href="#" class="list-item">
-                <h3 class="titre">Patients</h3>
-                <p class="desc"><span class="color"><?= $nbr_patient_today ?></span> patients admis pour une future pré-admission.</p>
-            </a>
-
-            <a href="#" class="list-item">
-                <h3 class="titre">Annulé</h3>
-                <p class="desc"><span class="color"><?= $nbr_annule_today ?></span> pré-admissions annulé pour aujourd'hui.</p>
-            </a>
-
-            <a href="#" class="list-item">
-                <h3 class="titre">En cours</h3>
-                <p class="desc"><span class="color"><?= $nbr_encours_today ?></span> pré-admissions en cours pour aujourd'hui.</p>
-            </a>
-
-            <a href="#" class="list-item">
-                <h3 class="titre">Terminé</h3>
-                <p class="desc"><span class="color"><?= $nbr_termine_today ?></span> pré-admissions terminé pour aujourd'hui.</p>
-            </a>
-
-            <a href="ajout_admission" class="list-item">
-                <h3 class="titre">Créer une nouvelle pré-admission</h3>
-            </a>
-        </ul>
-        <?php } ?>
-
+        <?php if($_SESSION['utilisateur'][3] == 3) {?>
         <div class="profil">
             <div class="infos">
                 <div class="nom"><?= $_SESSION['utilisateur'][1] ?> <span class="color"><?= $_SESSION['utilisateur'][0] ?></span></div>
@@ -123,42 +105,75 @@
             </div>
 
             <div class="last-prea">
-                <h3>Vos 20 dernières pré-admissions du jour</h3>
+                <h3>Vos pré-admissions des 5 prochaines semaines (de la plus récente à la plus vieille) </h3>
 
                 <ul class="list-prea-last">
                     <?php 
 
                         if($dernierePreaCount == 0) { ?>
                             <li class="list-item">
-                                <p>Aucune pré-admission réalisé aujourd'hui</p>
+                                <p>Aucune pré-admission prévu dans les 5 semaines</p>
                             </li>
                         <?php } else {
                             foreach($dernierePreaFetch as $preadmission) {
-                                $cherchePrea = $DB->prepare("SELECT * FROM operations WHERE idPatient = ?");
-                                $cherchePrea->execute([$preadmission['idPatient']]);
-                                $cherchePrea = $cherchePrea->fetch();
-
                                 $chercheMedecin = $DB->prepare("SELECT * FROM personnel WHERE id = ?");
                                 $chercheMedecin->execute([$preadmission['idMedecin']]);
                                 $chercheMedecin = $chercheMedecin->fetch();
+
+                                $select_prea = $DB->prepare('SELECT * from preadmission INNER JOIN operations on preadmission.idOperation = operations.id INNER JOIN patient on preadmission.idPatient = patient.numSecu where preadmission.id = ? order by operations.dateOperation and preadmission.status = "En cours";');
+                                $select_prea->execute([$preadmission['id']]);
+                                $select_prea = $select_prea->fetch();
                             
                             ?>
                                 <li class="list-item">
-                                    <div class="infos-prea">
-                                        <p><?= $preadmission['idPatient'] ?></p>
-                                        <p>Dr <?= $chercheMedecin['nom'] . ' ' . $chercheMedecin['prenom'] ?></p>
-                                        <p><?= $cherchePrea['dateOperation'] ?></p>
-                                        <p><?= $cherchePrea['heureOperation'] ?></p>
+                                    <div>
+                                        <label>Nom et prénom du patient : </label>
+                                        <?= $select_prea['nomNaissance'] . ' ' . $select_prea['prenom'] ?>
                                     </div>
 
-                                    <div class="btns">
-                                        <a href="modif_admission?id=<?= $preadmission['id']?>">Modifier</a>
+                                    <div>
+                                        <label>Date d'anniversaire : </label>
+                                        <?= $select_prea['dateNaissance'] ?>
                                     </div>
+
+                                    <div>
+                                        <label>Date de l'opération : </label>
+                                        <?= $preadmission['dateOperation'] ?>
+                                    </div>
+
+                                    <div>
+                                        <label>Heure de l'opération : </label>
+                                        <?= $preadmission['heureOperation'] ?>
+                                    </div>
+
+                                    <div>
+                                        <label>Chambre : </label>
+                                        N°<?= $preadmission['idChambre'] ?>
+                                    </div>
+
+                                    <?php if($preadmission['status'] == 'En cours') {?>
+                                    <div class="btns">
+                                        <a style="background: red;" href="changeStatut?id=<?= $preadmission['id']?>">Clôturer la pré-admission</a>
+                                    </div>
+
+                                    <?php } else if($preadmission['dateOperation'] == $dateAujourdhui) { ?>
+                                    <div class="btns">
+                                        <a style="background: #00A3FE;" href="changeStatut?id=<?= $preadmission['id']?>">Prendre en charge</a>
+                                    </div>
+
+                                    <?php } else { ?>
+                                    <div class="btns">
+                                        <a style="background: black; cursor: not-allowed;" href="">Pas encore disponible</a>
+                                    </div>
+                                    <?php } ?>
                                 </li>
                     <?php } } ?>
                 </ul>
             </div>
         </div>
+        <?php } ?>
     </main>
+
+    <script src="js/expireConnexion.js"></script>
 </body>
 </html>
