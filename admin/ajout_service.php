@@ -10,9 +10,12 @@
 
 <html>
     <head>
-
+            <link rel="stylesheet" href="../style/navBar.css">
     </head>
     <body>
+        <?php
+            require_once('src/navbar.php');
+        ?>
         <form method="post">
             <label for="login">login</label>
             <input name="login" type="text" required>
