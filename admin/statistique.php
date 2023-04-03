@@ -25,7 +25,7 @@
     </div>
     <?php
 
-      $data1 = $DB->prepare('SELECT id,service From personnel');
+      $data1 = $DB->prepare('SELECT count(id) FROM personnel');
       $data1->execute();
       $salaries = $data1->fetchall();
       foreach($salaries as $salarie){
@@ -71,7 +71,7 @@
       data: {
         labels: ['personnel'],
         datasets: [{
-          data: [<?php echo $salarie['id']; ?>],
+          data: [<?php echo $salarie['count(id) ']; ?>],
         }]
       },    
       options: {
